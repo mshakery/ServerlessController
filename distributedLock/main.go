@@ -1,9 +1,13 @@
 package ServerlessController
 
-func acquireLock() {
+import (
+	"context"
+)
+
+func acquireLock(ctx context.Context) {
 
 }
 
-func releaseLock() {
+func releaseLock(ctx context.Context) {
 
 }
