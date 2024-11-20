@@ -1,5 +1,13 @@
-package main
+package etcdMiddleware
 
-func main() {
+import (
+	"context"
+)
+
+func acquireLock(ctx context.Context) {
+
+}
+
+func releaseLock(ctx context.Context) {
 
 }

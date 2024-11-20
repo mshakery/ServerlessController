@@ -6,7 +6,7 @@
 // - protoc             v3.12.4
 // source: distributed_lock.proto
 
-package ServerlessController
+package etcdMiddleware
 
 import (
 	context "context"
