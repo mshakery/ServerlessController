@@ -1,0 +1,22 @@
+
+syntax = "proto3";
+
+package kubernetes;
+
+option go_package="authentication/authentication";
+
+import "generalView.proto";
+
+message AuthorizationRequest {
+  ClientRequest client_request = 1;
+  string uid = 2;
+}
+
+message Response {
+  int32 code = 1;
+  string status = 2;
+}
+
+service Authorization {
+  rpc Authorize(AuthorizationRequest) returns (Response) {}
+}
