@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/golang/protobuf/proto"
 	etcd "github.com/mshakery/ServerlessController/etcdMiddleware"
 	protos "github.com/mshakery/ServerlessController/protos"
 	"google.golang.org/grpc"
@@ -52,8 +53,14 @@ func (s *server) Authentication(ctx context.Context, in *protos.AuthenticationRe
 			resp.Code = 0
 			resp.Status = "User exists."
 
+			user := protos.User{}
+			err := proto.Unmarshal(kv.Value, &user)
+			if err != nil {
+				return nil, err
+			}
+
 			/* todo is this how we want to call authorization? */
-			authResp, err := callAuthorization(ctx, in.ClientRequest, string(kv.Value))
+			authResp, err := callAuthorization(ctx, in.ClientRequest, user.Uid)
 			if err != nil {
 				/* todo */
 			}
