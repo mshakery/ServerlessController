@@ -25,10 +25,9 @@ message Metadata {
 // PolicyRule defines a single rule for access.
 message PolicyRule {
   repeated string verbs = 1;          // Actions (e.g., get, list, watch)
-  repeated string apiGroups = 2;      // API groups for the resources (e.g., "", "apps")
-  repeated string resources = 3;      // Resource types (e.g., pods, deployments)
-  repeated string resourceNames = 4;  // Specific resource names (optional)
-  repeated string nonResourceURLs = 5; // Non-resource URLs (e.g., "/metrics")
+  repeated string resources = 2;      // Resource types (e.g., pods, deployments)
+  repeated string resourceNames = 3;  // Specific resource names (optional)
+  repeated string nonResourceURLs = 4; // Non-resource URLs (e.g., "/metrics")
 }
 
 // Role represents a Kubernetes Role resource.

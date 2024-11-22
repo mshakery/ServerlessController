@@ -35,7 +35,8 @@ func (s *server) Authentication(ctx context.Context, in *protos.AuthenticationRe
 	}
 	defer client.Close()
 
-	read, err := etcd.ReadFromEtcd(client, ctx, in.Token)
+	craftedKey := fmt.Sprintf("/cluster/resources/client/%s", in.Token)
+	read, err := etcd.ReadFromEtcd(client, ctx, craftedKey)
 	if err != nil {
 	}
 
@@ -52,26 +53,29 @@ func (s *server) Authentication(ctx context.Context, in *protos.AuthenticationRe
 			resp.Status = "User exists."
 
 			/* todo is this how we want to call authorization? */
-			callAuthorization(ctx, in.ClientRequest, string(kv.Value))
-			return &resp, nil
+			authResp, err := callAuthorization(ctx, in.ClientRequest, string(kv.Value))
+			if err != nil {
+				/* todo */
+			}
+			return authResp, nil
 		}
 	}
 	return nil, nil
 }
 
-func callAuthorization(ctx context.Context, client_request *protos.ClientRequest, uid string) {
-	/* TODO: address! */
-	conn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+func callAuthorization(ctx context.Context, client_request *protos.ClientRequest, uid string) (*protos.Response, error) {
+	conn, err := grpc.NewClient("authorization:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("could not connect: %v", err)
 	}
 	defer conn.Close()
 	c := protos.NewAuthorizationClient(conn)
 
-	_, err = c.Authorize(ctx, &protos.AuthorizationRequest{Uid: uid, ClientRequest: client_request})
+	resp, err := c.Authorize(ctx, &protos.AuthorizationRequest{Uid: uid, ClientRequest: client_request})
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		log.Fatalf("could not connect: %v", err)
 	}
+	return resp, nil
 }
 
 func main() {
