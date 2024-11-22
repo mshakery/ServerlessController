@@ -3,8 +3,10 @@ package etcdMiddleware
 import (
 	"context"
 	"fmt"
+	"github.com/golang/protobuf/proto"
 	"go.etcd.io/etcd/api/v3/v3rpc/rpctypes"
 	clientv3 "go.etcd.io/etcd/client/v3"
+	"reflect"
 	"time"
 )
 
@@ -66,4 +68,52 @@ func ReadFromEtcd(cli *clientv3.Client, ctx context.Context, key string) (*clien
 		fmt.Printf("%s : %s\n", ev.Key, ev.Value)
 	}
 	return resp, nil
+}
+
+func WriteToEtcdFromPb(cli *clientv3.Client, ctx context.Context, key string, val proto.Message) error {
+	marshalled, err := proto.Marshal(val)
+	if err != nil {
+		return fmt.Errorf("failed to marshal proto message: %w", err)
+	}
+	err = WriteToEtcd(cli, ctx, key, string(marshalled))
+	return err
+}
+
+func ReadOneFromEtcdToPb(cli *clientv3.Client, ctx context.Context, key string, to proto.Message) error {
+	read, err := ReadFromEtcd(cli, ctx, key)
+	if err != nil {
+		return err
+	}
+	if read.Count == 0 {
+		return fmt.Errorf("key not found: %s", key)
+	}
+
+	kv := read.Kvs[0]
+	if err := proto.Unmarshal(kv.Value, to); err != nil {
+		return fmt.Errorf("failed to unmarshal proto: %w", err)
+	}
+
+	return nil
+}
+
+func ReadManyFromEtcdToPb(cli *clientv3.Client, ctx context.Context, keyPrefix string, to []proto.Message) error {
+	read, err := ReadFromEtcd(cli, ctx, keyPrefix)
+	if err != nil {
+		return err
+	}
+	if read.Count == 0 {
+		return fmt.Errorf("key not found: %s", keyPrefix)
+	}
+
+	to = to[:0] // clears the "to"
+
+	for _, kv := range read.Kvs {
+		message := reflect.New(reflect.TypeOf(to).Elem()).Interface().(proto.Message)
+		if err := proto.Unmarshal(kv.Value, message); err != nil {
+			return fmt.Errorf("failed to unmarshal proto: %w", err)
+		}
+		to = append(to, message)
+	}
+
+	return nil
 }
