@@ -25,20 +25,23 @@ Don't push binaries to git, please <3
 
 ## Responsibilities 
 
-| Function                         | Description                     | By     | Status  |
-|----------------------------------|---------------------------------|--------|---------|
-| **Authentication**               | User authentication             | Arshia | Backlog | 
-| **Authorization**                | Check user has perms            | Arshia | Backlog | 
-| **WriteToEtcd**                  | Self explanatory (lib)          | Arshia | Doing   | 
-| **ReadFromEtcd**                 | Self explanatory (lib)          | Arshia | Doing   | 
-| **AcquireLock**                  | require lockid, over etcd (lib) | Arshia | Backlog | 
-| **ReleaseLock**                  | require lockid, over etcd (lib) | Arshia | Backlog | 
-| **NotifyWorkerNode**             | ?                               | ?      | Backlog | 
-| **NodeCheckerAwakerCron**        | ?                               | ?      | Backlog | 
-| **NodeChecker**                  | ?                               | ?      | Backlog | 
-| **DeploymentScalerAwakerCron**   | ?                               | ?      | Backlog | 
-| **DeploymentScaler**             | ?                               | ?      | Backlog | 
-| **Kubelet**                      | TODO: Split to subfuncs         | Roy    | Doing   |
+Status: Doing, Testing (written but haven't tested), Backlog, Done
+
+| Function                       | Description                     | By     | Status  |
+|--------------------------------|---------------------------------|--------|---------|
+| **Authentication**             | User authentication             | Arshia | Testing | 
+| **Authorization**              | Check user has perms            | Arshia | Testing | 
+| **WriteToEtcd**                | Self explanatory (lib)          | Arshia | Testing | 
+| **ReadFromEtcd**               | Self explanatory (lib)          | Arshia | Testing | 
+| **AcquireLock**                | require lockid, over etcd (lib) | Arshia | Testing | 
+| **ReleaseLock**                | require lockid, over etcd (lib) | Arshia | Testing | 
+| **WatchLock**                  | require lockid, over etcd (lib) | Arshia | Testing | 
+| **NotifyWorkerNode**           | ?                               | ?      | Backlog | 
+| **NodeCheckerAwakerCron**      | ?                               | ?      | Backlog | 
+| **NodeChecker**                | ?                               | ?      | Backlog | 
+| **DeploymentScalerAwakerCron** | ?                               | ?      | Backlog | 
+| **DeploymentScaler**           | ?                               | ?      | Backlog | 
+| **Kubelet**                    | TODO: Split to subfuncs         | Roy    | Doing   |
 
 ## Time Tracking
 
@@ -50,8 +53,8 @@ XP-Time: Experiment Time
 | **Time Type**     | **Arshia (hours)** | **Masoud (hours)** | **Roy (hours)** |
 |-------------------|--------------------|--------------------|-----------------|
 | **Total-Time**    |                    |                    |                 |
-| **Think-Time**    | 7                  | 7                  | 6               |
-| **Dev-Time**      | 2                  | 2                  | 0               |
+| **Think-Time**    | 9                  | 7                  | 6               |
+| **Dev-Time**      | 4                  | 2                  | 0               |
 | **XP-Time**       | 0                  | 0                  | 0               |
 | **Analysis-Time** | 0                  | 0                  | 0               |
 | **Write-Time**    | 0                  | 0                  | 0               |
