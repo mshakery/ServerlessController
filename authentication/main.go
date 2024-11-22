@@ -5,7 +5,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	authentication "github.com/mshakery/ServerlessController/authentication/protos"
+	authentication2 "github.com/mshakery/ServerlessController/protos"
 	"log"
 	"net"
 
@@ -17,10 +17,10 @@ var (
 )
 
 type server struct {
-	authentication.UnimplementedAuthenticationServer
+	authentication2.UnimplementedAuthenticationServer
 }
 
-func (s *server) Authentication(_ context.Context, in *authentication.AuthenticationRequest) (authentication.Response, error) {
+func (s *server) Authentication(_ context.Context, in *authentication2.AuthenticationRequest) (authentication2.Response, error) {
 	/*
 		should reade from ETCD. key is token. checks if value exists.
 		if exists, value is uid.
@@ -29,7 +29,7 @@ func (s *server) Authentication(_ context.Context, in *authentication.Authentica
 		creates Authorizationrequest. uid = uid from etcd.
 		then calls authorizationrequest.
 	*/
-	return authentication.Response{}, nil
+	return authentication2.Response{}, nil
 }
 
 func main() {
@@ -39,7 +39,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	authentication.RegisterAuthenticationServer(s, &server{})
+	authentication2.RegisterAuthenticationServer(s, &server{})
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
