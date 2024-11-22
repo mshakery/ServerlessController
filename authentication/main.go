@@ -6,10 +6,10 @@ import (
 	"fmt"
 	etcd "github.com/mshakery/ServerlessController/etcdMiddleware"
 	protos "github.com/mshakery/ServerlessController/protos"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"net"
-
-	"google.golang.org/grpc"
 )
 
 var (
@@ -20,7 +20,7 @@ type server struct {
 	protos.UnimplementedAuthenticationServer
 }
 
-func (s *server) Authentication(ctx context.Context, in *protos.AuthenticationRequest) (protos.Response, error) {
+func (s *server) Authentication(ctx context.Context, in *protos.AuthenticationRequest) (*protos.Response, error) {
 	/*
 		should reade from ETCD. key is token. checks if value exists.
 		if exists, value is uid.
@@ -44,17 +44,34 @@ func (s *server) Authentication(ctx context.Context, in *protos.AuthenticationRe
 	if read.Count == 0 {
 		resp.Code = -1
 		resp.Status = "Token does not exist."
-		return resp, nil
+		return &resp, nil
 	} else {
 		for _, kv := range read.Kvs { /* todo test */
 			fmt.Printf("k: %s, v: %s\n", kv.Key, kv.Value)
 			resp.Code = 0
 			resp.Status = "User exists."
+
+			/* todo is this how we want to call authorization? */
+			callAuthorization(ctx, in.ClientRequest, string(kv.Value))
+			return &resp, nil
 		}
 	}
+	return nil, nil
+}
 
-	/* todo call authorization */
-	return resp, nil
+func callAuthorization(ctx context.Context, client_request *protos.ClientRequest, uid string) {
+	/* TODO: address! */
+	conn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("could not connect: %v", err)
+	}
+	defer conn.Close()
+	c := protos.NewAuthorizationClient(conn)
+
+	_, err = c.Authorize(ctx, &protos.AuthorizationRequest{Uid: uid, ClientRequest: client_request})
+	if err != nil {
+		log.Fatalf("could not greet: %v", err)
+	}
 }
 
 func main() {

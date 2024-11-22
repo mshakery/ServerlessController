@@ -20,7 +20,7 @@ type server struct {
 	protos.UnimplementedAuthorizationServer
 }
 
-func (s *server) Authorization(ctx context.Context, in *protos.AuthorizationRequest) (protos.Response, error) {
+func (s *server) Authorization(ctx context.Context, in *protos.AuthorizationRequest) (*protos.Response, error) {
 	/*
 		should check if user has permission to perform action.
 	*/
@@ -40,7 +40,7 @@ func (s *server) Authorization(ctx context.Context, in *protos.AuthorizationRequ
 	if read.Count == 0 {
 		resp.Code = -1
 		resp.Status = "User does not have permission."
-		return resp, nil
+		return &resp, nil
 	} else {
 		for _, kv := range read.Kvs { /* todo test */
 			fmt.Printf("k: %s, v: %s\n", kv.Key, kv.Value)
@@ -50,7 +50,7 @@ func (s *server) Authorization(ctx context.Context, in *protos.AuthorizationRequ
 	}
 
 	/* todo the rest */
-	return resp, nil
+	return &resp, nil
 }
 
 func main() {
