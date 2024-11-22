@@ -17,17 +17,12 @@ var (
 )
 
 type server struct {
-	protos.UnimplementedAuthenticationServer
+	protos.UnimplementedAuthorizationServer
 }
 
-func (s *server) Authentication(ctx context.Context, in *protos.AuthenticationRequest) (protos.Response, error) {
+func (s *server) Authorization(ctx context.Context, in *protos.AuthorizationRequest) (protos.Response, error) {
 	/*
-		should reade from ETCD. key is token. checks if value exists.
-		if exists, value is uid.
-		then makes request for authorization.
-
-		creates Authorizationrequest. uid = uid from etcd.
-		then calls authorizationrequest.
+		should check if user has permission to perform action.
 	*/
 	client, err := etcd.ConnectToEtcd()
 	if err != nil {
@@ -35,7 +30,8 @@ func (s *server) Authentication(ctx context.Context, in *protos.AuthenticationRe
 	}
 	defer client.Close()
 
-	read, err := etcd.ReadFromEtcd(client, ctx, in.Token)
+	whatToRead := fmt.Sprintf("%d:read", in.Uid) /* todo <-- what should this be? */
+	read, err := etcd.ReadFromEtcd(client, ctx, whatToRead)
 	if err != nil {
 	}
 
@@ -43,17 +39,17 @@ func (s *server) Authentication(ctx context.Context, in *protos.AuthenticationRe
 
 	if read.Count == 0 {
 		resp.Code = -1
-		resp.Status = "Token does not exist."
+		resp.Status = "User does not have permission."
 		return resp, nil
 	} else {
 		for _, kv := range read.Kvs { /* todo test */
 			fmt.Printf("k: %s, v: %s\n", kv.Key, kv.Value)
 			resp.Code = 0
-			resp.Status = "User exists."
+			resp.Status = "User has permission."
 		}
 	}
 
-	/* todo call authorization */
+	/* todo the rest */
 	return resp, nil
 }
 
@@ -64,7 +60,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	protos.RegisterAuthenticationServer(s, &server{})
+	protos.RegisterAuthorizationServer(s, &server{})
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

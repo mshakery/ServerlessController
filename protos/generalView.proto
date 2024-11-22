@@ -212,3 +212,8 @@ message ClientRequest {
   }
   google.protobuf.Timestamp timestamp = 8;
 }
+
+message Response {
+  int32 code = 1;
+  string status = 2;
+}

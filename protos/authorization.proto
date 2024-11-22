@@ -12,11 +12,6 @@ message AuthorizationRequest {
   string uid = 2;
 }
 
-message Response {
-  int32 code = 1;
-  string status = 2;
-}
-
 service Authorization {
   rpc Authorize(AuthorizationRequest) returns (Response) {}
 }

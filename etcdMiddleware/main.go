@@ -10,7 +10,7 @@ import (
 
 var endpoints = []string{"localhost:2379"}
 
-func connectToEtcd() (*clientv3.Client, error) {
+func ConnectToEtcd() (*clientv3.Client, error) {
 	cli, err := clientv3.New(clientv3.Config{
 		Endpoints:   endpoints,
 		DialTimeout: 5 * time.Second,
@@ -29,7 +29,7 @@ func connectToEtcd() (*clientv3.Client, error) {
 	*/
 }
 
-func writeToEtcd(cli *clientv3.Client, ctx context.Context, key string, val string) error {
+func WriteToEtcd(cli *clientv3.Client, ctx context.Context, key string, val string) error {
 	_, err := cli.Put(ctx, key, val)
 	if err != nil {
 		switch err {
@@ -47,7 +47,7 @@ func writeToEtcd(cli *clientv3.Client, ctx context.Context, key string, val stri
 	return nil
 }
 
-func readFromEtcd(cli *clientv3.Client, ctx context.Context, key string, val string) (*clientv3.GetResponse, error) {
+func ReadFromEtcd(cli *clientv3.Client, ctx context.Context, key string) (*clientv3.GetResponse, error) {
 	resp, err := cli.Get(ctx, key)
 	if err != nil {
 		switch err {
