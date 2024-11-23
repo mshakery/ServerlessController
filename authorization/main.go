@@ -32,7 +32,7 @@ func (s *server) Authorization(ctx context.Context, in *protos.AuthorizationRequ
 	}
 	defer client.Close()
 
-	whatToRead := fmt.Sprintf("/cluster/resources/role_binding/")
+	whatToRead := fmt.Sprintf("/cluster/resources/role_binding/") /* todo verify */
 	read, err := etcd.ReadFromEtcd(client, ctx, whatToRead)
 	if err != nil {
 	}
@@ -54,7 +54,7 @@ func (s *server) Authorization(ctx context.Context, in *protos.AuthorizationRequ
 			if err != nil {
 				return nil, err
 			}
-			if slices.Contains(roleReference.Subjects, in.Uid) {
+			if slices.Contains(roleReference.Subjects, in.Uid) { /* todo refactor add to slice and then read all and check in struct */
 				role := protos.Role{}
 				whatToRead := fmt.Sprintf("/cluster/resources/role/%s", roleReference.RoleRef)
 				err := etcd.ReadOneFromEtcdToPb(client, ctx, whatToRead, &role)
@@ -97,29 +97,29 @@ func main() {
 }
 
 func checkHasPermission(rule *protos.PolicyRule, request *protos.ClientRequest) bool {
-	switch resource := request.OneofResource.(type) {
+	switch _ := request.OneofResource.(type) {
 	case *protos.ClientRequest_Deployment:
-		if slices.Contains(rule.Resources, "deployments") && slices.Contains(rule.ResourceNames, resource.Deployment.Metadata.Name) {
+		if slices.Contains(rule.Resources, "deployments") && slices.Contains(rule.Verbs, request.Operation) {
 			return true
 		}
 	case *protos.ClientRequest_Role:
-		if slices.Contains(rule.Resources, "roles") && slices.Contains(rule.ResourceNames, resource.Role.Metadata.Name) {
+		if slices.Contains(rule.Resources, "roles") && slices.Contains(rule.Verbs, request.Operation) {
 			return true
 		}
 	case *protos.ClientRequest_RoleBinding:
-		if slices.Contains(rule.Resources, "rolebindings") && slices.Contains(rule.ResourceNames, resource.RoleBinding.Metadata.Name) {
+		if slices.Contains(rule.Resources, "rolebindings") && slices.Contains(rule.Verbs, request.Operation) {
 			return true
 		}
 	case *protos.ClientRequest_User:
-		if slices.Contains(rule.Resources, "users") && slices.Contains(rule.ResourceNames, resource.User.Uid) {
+		if slices.Contains(rule.Resources, "users") && slices.Contains(rule.Verbs, request.Operation) {
 			return true
 		}
 	case *protos.ClientRequest_Node:
-		if slices.Contains(rule.Resources, "nodes") && slices.Contains(rule.ResourceNames, resource.Node.Metadata.Name) {
+		if slices.Contains(rule.Resources, "nodes") && slices.Contains(rule.Verbs, request.Operation) {
 			return true
 		}
 	case *protos.ClientRequest_Pod:
-		if slices.Contains(rule.Resources, "pods") && slices.Contains(rule.ResourceNames, resource.Pod.Metadata.Name) {
+		if slices.Contains(rule.Resources, "pods") && slices.Contains(rule.Verbs, request.Operation) {
 			return true
 		}
 	}
