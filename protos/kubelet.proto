@@ -1,0 +1,26 @@
+syntax="proto3";
+
+package kubernetes;
+
+option go_package="kubelet/kubelet";
+
+message PodMetrics {
+  string name = 1;
+  string cpu_usage = 2;
+  string memory_usage = 3;
+}
+
+message NodeMetrics {
+  repeated PodMetrics pod_metrics = 1;
+}
+
+message Empty {}
+
+message Pod {
+  string name = 1;
+}
+
+service Kubelet {
+  rpc Metric(Empty) returns (NodeMetrics) {}
+  rpc run_a_pod(Pod) returns (Empty) {}
+}
