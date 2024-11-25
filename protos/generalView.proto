@@ -26,8 +26,6 @@ message Metadata {
 message PolicyRule {
   repeated string verbs = 1;          // Actions (e.g., get, list, watch)
   repeated string resources = 2;      // Resource types (e.g., pods, deployments)
-  repeated string resourceNames = 3;  // Specific resource names (optional)
-  repeated string nonResourceURLs = 4; // Non-resource URLs (e.g., "/metrics")
 }
 
 // Role represents a Kubernetes Role resource.
