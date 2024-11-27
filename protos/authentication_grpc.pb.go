@@ -6,7 +6,7 @@
 // - protoc             v3.12.4
 // source: authentication.proto
 
-package authentication
+package protos
 
 import (
 	context "context"

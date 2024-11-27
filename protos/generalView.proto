@@ -1,7 +1,7 @@
 
 syntax = "proto3";
 
-option go_package="authentication/authentication";
+option go_package="protos/protos";
 
 import "google/protobuf/timestamp.proto";
 
@@ -100,6 +100,7 @@ message Pod {
   Metadata metadata = 1;
   PodSpec spec = 2;
   PodStatus status = 3;
+  string name = 4;
 }
 
 

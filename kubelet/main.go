@@ -1,39 +1,32 @@
 package kubelet
 
 import (
-        "context"
-        "flag"
-        "fmt"
-        etcd "github.com/mshakery/ServerlessController/etcdMiddleware"
-        protos "github.com/mshakery/ServerlessController/protos"
-        "log"
-        "net"
-
-        "google.golang.org/grpc"
+	"context"
+	"flag"
+	protos "github.com/mshakery/ServerlessController/protos"
 )
 
 var (
 	port = flag.Int("port", 50060, "Metric Port")
 )
 
-type Pod struct {
-	protos.UnimplementedPod
+type server struct {
+	protos.UnimplementedKubeletServer
 }
 
-var list[] pods_to_run;
+var podsToRun []protos.Pod
 
-func(s *server) run_a_pod(ctx context.Context,  pod *protos.Pod) (Empty, error) {
+func (s *server) runAPod(ctx context.Context, pod *protos.Pod) (protos.Empty, error) {
 	// command
-	pods_to_run = append(pods_to_run, pod.name);
-	return protos.Empty{};
+	podsToRun = append(podsToRun, *pod)
+	return protos.Empty{}, nil
 }
 
-func(s *server) Metrics(ctx context.Context,  pod *protos.Empty) (*protos.NodeMetrics, error) {
-	
-	return protos.PodMetrics {
-		name: "1",
-		cpu_usage: "",
-		memory_usage: ""
-	}, nil;
+func (s *server) Metrics(ctx context.Context, pod *protos.Empty) (*protos.PodMetrics, error) {
+	metrics := protos.PodMetrics{
+		Name:        "1",
+		CpuUsage:    "",
+		MemoryUsage: "",
+	}
+	return &metrics, nil
 }
-

@@ -3,7 +3,7 @@ syntax = "proto3";
 
 package kubernetes;
 
-option go_package="authentication/authentication";
+option go_package="protos/protos";
 
 import "generalView.proto";
 
