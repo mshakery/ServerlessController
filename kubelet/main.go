@@ -1,9 +1,13 @@
-package kubelet
+package main
 
 import (
 	"context"
 	"flag"
+	"fmt"
 	protos "github.com/mshakery/ServerlessController/protos"
+	"google.golang.org/grpc"
+	"log"
+	"net"
 )
 
 var (
@@ -14,11 +18,11 @@ type server struct {
 	protos.UnimplementedKubeletServer
 }
 
-var podsToRun []protos.Pod
+var podsToRun []string
 
 func (s *server) runAPod(ctx context.Context, pod *protos.Pod) (protos.Empty, error) {
 	// command
-	podsToRun = append(podsToRun, *pod)
+	podsToRun = append(podsToRun, pod.Name)
 	return protos.Empty{}, nil
 }
 
@@ -29,4 +33,18 @@ func (s *server) Metrics(ctx context.Context, pod *protos.Empty) (*protos.PodMet
 		MemoryUsage: "",
 	}
 	return &metrics, nil
+}
+
+func main() {
+	flag.Parse()
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+	s := grpc.NewServer()
+	protos.RegisterKubeletServer(s, &server{})
+	log.Printf("server listening at %v", lis.Addr())
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
 }
