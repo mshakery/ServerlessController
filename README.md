@@ -53,8 +53,8 @@ XP-Time: Experiment Time
 | **Time Type**     | **Arshia (hours)** | **Masoud (hours)** | **Roy (hours)** |
 |-------------------|--------------------|--------------------|-----------------|
 | **Total-Time**    |                    |                    |                 |
-| **Think-Time**    | 10                 | 8                  | 6               |
-| **Dev-Time**      | 6                  | 2                  | 1               |
+| **Think-Time**    | 11                 | 8                  | 6               |
+| **Dev-Time**      | 8                  | 2                  | 1               |
 | **XP-Time**       | 0                  | 0                  | 0               |
 | **Analysis-Time** | 0                  | 0                  | 0               |
 | **Write-Time**    | 0                  | 0                  | 0               |

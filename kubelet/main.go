@@ -22,7 +22,7 @@ var podsToRun []string
 
 func (s *server) runAPod(ctx context.Context, pod *protos.Pod) (protos.Empty, error) {
 	// command
-	podsToRun = append(podsToRun, pod.Name)
+	podsToRun = append(podsToRun, pod.Metadata.Name)
 	return protos.Empty{}, nil
 }
 
