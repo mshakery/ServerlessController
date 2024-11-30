@@ -22,7 +22,7 @@ type server struct {
 func ResourceFactory(req *protos.ClientRequest) resources.Resource {
 	switch _ := req.OneofResource.(type) {
 	case *protos.ClientRequest_Deployment:
-		return &resources.DeploymentResource{Deployment: req.GetDeployment()}
+		return &resources.DeploymentResource{Deployment: *req.GetDeployment()}
 	case *protos.ClientRequest_Role:
 		return &resources.RoleResource{Role: *req.GetRole()}
 	case *protos.ClientRequest_RoleBinding:
@@ -32,8 +32,9 @@ func ResourceFactory(req *protos.ClientRequest) resources.Resource {
 	case *protos.ClientRequest_Node:
 		return &resources.NodeResource{Node: *req.GetNode()}
 	case *protos.ClientRequest_Pod:
-		return &resources.PodResource{pod: req.GetPod()}
+		return &resources.PodResource{Pod: *req.GetPod()}
 	}
+	return nil
 }
 
 func (s *server) Apply(ctx context.Context, in *protos.ApplyRequest) (*protos.Response, error) {

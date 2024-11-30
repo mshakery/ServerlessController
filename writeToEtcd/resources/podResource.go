@@ -8,17 +8,17 @@ import (
 )
 
 type PodResource struct {
-	pod protos.Pod
+	Pod protos.Pod
 }
 
 func (pr *PodResource) GetKVs() map[string]proto.Message {
 	KVs := make(map[string]proto.Message)
-	key := fmt.Sprintf("/cluster/resources/pod/%s/%s", pr.pod.Metadata.Namespace, pr.pod.Metadata.Name)
-	KVs[key] = &pr.pod
-	key = fmt.Sprintf("/cluster/resources/pod/%s/%s/usage", pr.pod.Metadata.Namespace, pr.pod.Metadata.Name)
-	KVs[key] = pr.pod.GetStatus().GetResourceUsage()
-	key = fmt.Sprintf("/cluster/resources/pod/%s/%s/worker", pr.pod.Metadata.Namespace, pr.pod.Metadata.Name)
-	KVs[key] = pr.pod.GetStatus().GetWorker()
+	key := fmt.Sprintf("/cluster/resources/pod/%s/%s", pr.Pod.Metadata.Namespace, pr.Pod.Metadata.Name)
+	KVs[key] = &pr.Pod
+	key = fmt.Sprintf("/cluster/resources/pod/%s/%s/usage", pr.Pod.Metadata.Namespace, pr.Pod.Metadata.Name)
+	KVs[key] = pr.Pod.GetStatus().GetResourceUsage()
+	key = fmt.Sprintf("/cluster/resources/pod/%s/%s/worker", pr.Pod.Metadata.Namespace, pr.Pod.Metadata.Name)
+	KVs[key] = pr.Pod.GetStatus().GetWorker()
 	return KVs
 }
 

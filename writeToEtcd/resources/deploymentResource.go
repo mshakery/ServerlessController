@@ -40,7 +40,7 @@ func (dr *DeploymentResource) CreatePostHook(ctx context.Context) bool {
 	}
 	result := true
 	for _, pod := range pods {
-		podResource := PodResource{pod: pod}                       //TODO: Debug this
+		podResource := PodResource{Pod: pod}
 		result = result && CreateResourceInEtcd(ctx, &podResource) //TODO: parallelize it
 	}
 	return result
