@@ -114,6 +114,5 @@ func ReadManyFromEtcdToPb(cli *clientv3.Client, ctx context.Context, keyPrefix s
 		}
 		to = append(to, message)
 	}
-
 	return nil
 }

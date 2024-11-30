@@ -80,11 +80,21 @@ message PodSpec {
   string restartPolicy = 4;             // Restart policy (e.g., Always, OnFailure)
 }
 
+message ResourceUsage {
+  map<string, string> resource_usage = 1;
+}
+
+message Worker {
+  string worker = 1;
+}
+
 // PodStatus defines the status of a Pod.
 message PodStatus {
   string phase = 1;                     // Phase of the Pod (e.g., Running, Pending)
   string message = 2;                   // Status message
   repeated Condition conditions = 3;    // List of conditions
+  ResourceUsage resource_usage = 4;
+  Worker worker = 5;
 }
 
 // Condition represents a single condition of the Pod.
@@ -93,6 +103,7 @@ message Condition {
   string status = 2;                    // Status (True, False, Unknown)
   string reason = 3;                    // Reason for the condition's status
   string message = 4;                   // Message describing the condition
+  google.protobuf.Timestamp last_update = 5;
 }
 
 // Pod represents a Kubernetes Pod resource.
@@ -100,7 +111,6 @@ message Pod {
   Metadata metadata = 1;
   PodSpec spec = 2;
   PodStatus status = 3;
-  string name = 4;
 }
 
 
@@ -129,9 +139,7 @@ message PodTemplate {
 // DeploymentStatus defines the status of a Deployment.
 message DeploymentStatus {
   int32 replicas = 1;                    // Total number of replicas
-  int32 updatedReplicas = 2;             // Number of updated replicas
-  int32 readyReplicas = 3;               // Number of ready replicas
-  string message = 4;                    // Additional status message
+  repeated string pod_names = 2;
 }
 
 // Deployment represents a Kubernetes Deployment resource.
@@ -159,12 +167,17 @@ message NodeSpec {
   map<string, string> taints = 3;    // Taints applied to the node
 }
 
+message PodList {
+  repeated string pod_names = 1;
+}
+
 // NodeStatus defines the status of a Node.
 message NodeStatus {
-  repeated Condition conditions = 1; // List of conditions for the node
+  Condition condition = 1; //condition of the node
   Capacity capacity = 2;             // Total capacity of the node
   Capacity allocatable = 3;          // Resources allocatable by the node
   NodeInfo nodeInfo = 4;             // General information about the node
+  PodList pods = 5;
 }
 
 // Capacity defines the resource capacities and allocatable resources.
