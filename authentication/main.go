@@ -37,7 +37,7 @@ func (s *server) Authentication(ctx context.Context, in *protos.AuthenticationRe
 	defer client.Close()
 
 	craftedKey := fmt.Sprintf("/cluster/resources/user/%s", in.Token)
-	read, err := etcd.ReadFromEtcd(client, ctx, craftedKey)
+	read, err := etcd.ReadFromEtcd(client, ctx, craftedKey, false)
 	if err != nil {
 	}
 

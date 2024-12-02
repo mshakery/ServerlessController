@@ -33,7 +33,7 @@ func (s *server) Authorization(ctx context.Context, in *protos.AuthorizationRequ
 	defer client.Close()
 
 	whatToRead := fmt.Sprintf("/cluster/resources/role_binding/") /* todo verify */
-	read, err := etcd.ReadFromEtcd(client, ctx, whatToRead)
+	read, err := etcd.ReadFromEtcd(client, ctx, whatToRead, false)
 	if err != nil {
 	}
 

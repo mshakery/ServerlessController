@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc"
 	"log"
 	"net"
+	"strconv"
 )
 
 var (
@@ -18,20 +19,34 @@ type server struct {
 	protos.UnimplementedKubeletServer
 }
 
-var podsToRun []string
+var podsToRun []*protos.Pod
 
 func (s *server) runAPod(ctx context.Context, pod *protos.Pod) (protos.Empty, error) {
 	// command
-	podsToRun = append(podsToRun, pod.Metadata.Name)
+	podsToRun = append(podsToRun, pod)
 	return protos.Empty{}, nil
 }
 
-func (s *server) Metrics(ctx context.Context, pod *protos.Empty) (*protos.PodMetrics, error) {
-	metrics := protos.PodMetrics{
-		Name:        "1",
-		CpuUsage:    "",
-		MemoryUsage: "",
+func (s *server) Metrics(ctx context.Context, in *protos.Empty) (*protos.NodeMetrics, error) {
+	metrics := protos.NodeMetrics{}
+	var result []*protos.PodMetrics
+	for _, pod := range podsToRun {
+		pm := protos.PodMetrics{}
+		pm.Name = pod.GetMetadata().GetName()
+		pm.Namespace = pod.GetMetadata().GetNamespace()
+		CpuUsage, MemoryUsage := 0, 0
+		for _, container := range pod.Spec.Containers {
+			CCpuUsage, _ := strconv.Atoi(container.GetResources().Requests["cpu"])
+			CMemoryUsage, _ := strconv.Atoi(container.GetResources().Requests["memory"])
+			CpuUsage += CCpuUsage
+			MemoryUsage += CMemoryUsage
+		}
+		// TODO: it must be the maximum usage and request
+		pm.CpuUsage = strconv.Itoa(CpuUsage)
+		pm.MemoryUsage = strconv.Itoa(MemoryUsage)
+		result = append(result, &pm)
 	}
+	metrics.PodMetrics = result
 	return &metrics, nil
 }
 

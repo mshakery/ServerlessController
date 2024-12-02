@@ -8,8 +8,9 @@ import "generalView.proto";
 
 message PodMetrics {
   string name = 1;
-  string cpu_usage = 2;
-  string memory_usage = 3;
+  string namespace = 2;
+  string cpu_usage = 3;
+  string memory_usage = 4;
 }
 
 message NodeMetrics {

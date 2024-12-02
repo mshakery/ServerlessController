@@ -19,8 +19,8 @@ func (nr *NodeResource) GetKVs() map[string]proto.Message {
 	KVs[key] = nr.Node.GetStatus().GetCapacity()
 	key = fmt.Sprintf("/cluster/resources/node/%s/condition", nr.Node.Metadata.Name)
 	KVs[key] = nr.Node.GetStatus().GetCondition()
-	key = fmt.Sprintf("/cluster/resources/node/%s/pods", nr.Node.Metadata.Name)
-	KVs[key] = nr.Node.GetStatus().GetPods()
+	//key = fmt.Sprintf("/cluster/resources/node/%s/pods", nr.Node.Metadata.Name)
+	//KVs[key] = nr.Node.GetStatus().GetPods()
 	return KVs
 }
 

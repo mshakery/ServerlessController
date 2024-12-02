@@ -49,8 +49,14 @@ func WriteToEtcd(cli *clientv3.Client, ctx context.Context, key string, val stri
 	return nil
 }
 
-func ReadFromEtcd(cli *clientv3.Client, ctx context.Context, key string) (*clientv3.GetResponse, error) {
-	resp, err := cli.Get(ctx, key)
+func ReadFromEtcd(cli *clientv3.Client, ctx context.Context, key string, prefix bool) (*clientv3.GetResponse, error) {
+	var resp *clientv3.GetResponse
+	var err error
+	if prefix {
+		resp, err = cli.Get(ctx, key, clientv3.WithPrefix())
+	} else {
+		resp, err = cli.Get(ctx, key)
+	}
 	if err != nil {
 		switch err {
 		case context.Canceled:
@@ -80,7 +86,7 @@ func WriteToEtcdFromPb(cli *clientv3.Client, ctx context.Context, key string, va
 }
 
 func ReadOneFromEtcdToPb(cli *clientv3.Client, ctx context.Context, key string, to proto.Message) error {
-	read, err := ReadFromEtcd(cli, ctx, key)
+	read, err := ReadFromEtcd(cli, ctx, key, false)
 	if err != nil {
 		return err
 	}
@@ -97,7 +103,7 @@ func ReadOneFromEtcdToPb(cli *clientv3.Client, ctx context.Context, key string, 
 }
 
 func ReadManyFromEtcdToPb(cli *clientv3.Client, ctx context.Context, keyPrefix string, to []proto.Message) error {
-	read, err := ReadFromEtcd(cli, ctx, keyPrefix)
+	read, err := ReadFromEtcd(cli, ctx, keyPrefix, true)
 	if err != nil {
 		return err
 	}

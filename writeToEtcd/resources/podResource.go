@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"github.com/golang/protobuf/proto"
 	"github.com/mshakery/ServerlessController/protos"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"log"
 )
 
 type PodResource struct {
@@ -23,6 +26,15 @@ func (pr *PodResource) GetKVs() map[string]proto.Message {
 }
 
 func (pr *PodResource) CreatePostHook(ctx context.Context) bool {
+	conn, err2 := grpc.NewClient("scheduler", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err2 != nil {
+		log.Fatalf("scheduler node: could not connect: %v", err2)
+	}
+	c := protos.NewSchedulerClient(conn)
+	in := protos.PodDetail{Name: pr.Pod.GetMetadata().GetName(), Namespace: pr.Pod.GetMetadata().GetNamespace()}
+	_, err := c.Schedule(ctx, &in)
+	if err != nil {
+		log.Fatalf("schedule error: %v", err)
+	}
 	return true
-	// TODO: call scheduler
 }
