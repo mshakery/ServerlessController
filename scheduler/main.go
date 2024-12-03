@@ -38,7 +38,7 @@ func getNodesWithSufficientResource(ctx context.Context, cli *clientv3.Client, c
 		if strings.Count(string(kv.Key), "/") == 5 && strings.HasSuffix(string(kv.Key), "/allocatable") {
 			nodeAllocatable := protos.Capacity{}
 			nd := NodeDetail{}
-			nd.name = strings.Split(string(kv.Key), "/")[3]
+			nd.name = strings.Split(string(kv.Key), "/")[4]
 			err := proto.Unmarshal(kv.Value, &nodeAllocatable)
 			if err != nil {
 				panic(err)
