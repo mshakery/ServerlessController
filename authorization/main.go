@@ -7,6 +7,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	etcd "github.com/mshakery/ServerlessController/etcdMiddleware"
 	protos "github.com/mshakery/ServerlessController/protos"
+	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
 	"slices"
@@ -15,14 +16,14 @@ import (
 )
 
 var (
-	port = flag.Int("port", 50051, "The server port")
+	port = flag.Int("port", 50052, "The server port")
 )
 
 type server struct {
 	protos.UnimplementedAuthorizationServer
 }
 
-func (s *server) Authorization(ctx context.Context, in *protos.AuthorizationRequest) (*protos.Response, error) {
+func (s *server) Authorize(ctx context.Context, in *protos.AuthorizationRequest) (*protos.Response, error) {
 	/*
 		should check if user has permission to perform action.
 	*/
@@ -90,6 +91,7 @@ func main() {
 	}
 	s := grpc.NewServer()
 	protos.RegisterAuthorizationServer(s, &server{})
+	reflection.Register(s)
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
