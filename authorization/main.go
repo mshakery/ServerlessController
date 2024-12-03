@@ -80,6 +80,8 @@ func (s *server) Authorize(ctx context.Context, in *protos.AuthorizationRequest)
 		/* todo the rest */
 		return &resp, nil
 	}
+	resp.Code = -1
+	resp.Status = "not enough permission"
 	return &resp, nil
 }
 
