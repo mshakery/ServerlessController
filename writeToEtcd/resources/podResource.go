@@ -26,7 +26,7 @@ func (pr *PodResource) GetKVs() map[string]proto.Message {
 }
 
 func (pr *PodResource) CreatePostHook(ctx context.Context) bool {
-	conn, err2 := grpc.NewClient("scheduler", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err2 := grpc.NewClient("localhost:50054", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err2 != nil {
 		log.Fatalf("scheduler node: could not connect: %v", err2)
 	}

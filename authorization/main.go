@@ -7,6 +7,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	etcd "github.com/mshakery/ServerlessController/etcdMiddleware"
 	protos "github.com/mshakery/ServerlessController/protos"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
@@ -78,7 +79,11 @@ func (s *server) Authorize(ctx context.Context, in *protos.AuthorizationRequest)
 
 	if hasPermission {
 		/* todo the rest */
-		return &resp, nil
+		write2Etcd, err := callWrite2Etcd(ctx, in.ClientRequest, in.Uid)
+		if err != nil {
+			return nil, err
+		}
+		return write2Etcd, nil
 	}
 	resp.Code = -1
 	resp.Status = "not enough permission"
@@ -128,4 +133,23 @@ func checkHasPermission(rule *protos.PolicyRule, request *protos.ClientRequest) 
 		}
 	}
 	return false
+}
+
+func callWrite2Etcd(ctx context.Context, client_request *protos.ClientRequest, uid string) (*protos.Response, error) {
+	conn, err := grpc.NewClient("localhost:50053", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("could not connect: %v", err)
+	}
+	defer conn.Close()
+	c := protos.NewWriteToEtcdClient(conn)
+
+	applyReq := &protos.ApplyRequest{
+		ClientRequest: client_request,
+	}
+
+	resp, err := c.Apply(ctx, applyReq)
+	if err != nil {
+		log.Fatalf("could not connect: %v", err)
+	}
+	return resp, nil
 }
