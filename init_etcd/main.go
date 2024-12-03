@@ -28,4 +28,6 @@ func main() {
 		fmt.Printf("ik schrijf het %s kunde op de database. Wat leuk! ", user.UserName)
 	}
 
+	protos.Role{Metadata: }
+
 }
