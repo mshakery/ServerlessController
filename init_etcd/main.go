@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	addUsers, addRoles, addRoleBinding := false, false, false
+	addUsers, addRoles, addRoleBinding := false, false, true
 
 	cli, err := etcdMiddleware.ConnectToEtcd()
 	if err != nil {
@@ -88,7 +88,7 @@ func main() {
 					Uid:       "0",
 				},
 				RoleRef:  "role1",
-				Subjects: []string{"masoud", "arshia"},
+				Subjects: []string{"0", "2"},
 			},
 			{
 				Metadata: &protos.Metadata{
@@ -97,7 +97,7 @@ func main() {
 					Uid:       "1",
 				},
 				RoleRef:  "role2",
-				Subjects: []string{"roy"},
+				Subjects: []string{"1"},
 			},
 		}
 
