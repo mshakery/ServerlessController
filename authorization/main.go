@@ -97,7 +97,7 @@ func main() {
 }
 
 func checkHasPermission(rule *protos.PolicyRule, request *protos.ClientRequest) bool {
-	switch _ := request.OneofResource.(type) {
+	switch request.OneofResource.(type) {
 	case *protos.ClientRequest_Deployment:
 		if slices.Contains(rule.Resources, "deployments") && slices.Contains(rule.Verbs, request.Operation) {
 			return true
