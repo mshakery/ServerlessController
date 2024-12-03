@@ -22,7 +22,7 @@ type server struct {
 	protos.UnimplementedAuthenticationServer
 }
 
-func (s *server) Authentication(ctx context.Context, in *protos.AuthenticationRequest) (*protos.Response, error) {
+func (s *server) Auth(ctx context.Context, in *protos.AuthenticationRequest) (*protos.Response, error) {
 	/*
 		should reade from ETCD. key is token. checks if value exists.
 		if exists, value is uid.
