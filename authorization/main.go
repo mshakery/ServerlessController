@@ -49,7 +49,7 @@ func (s *server) Authorize(ctx context.Context, in *protos.AuthorizationRequest)
 		return &resp, nil
 	} else {
 		for _, kv := range read.Kvs { /* todo test */
-			fmt.Printf("k: %s, v: %s\n", kv.Key, kv.Value)
+			fmt.Printf("itering over: key: %s, val: %s\n", kv.Key, kv.Value)
 			roleReference := protos.RoleBinding{}
 			err := proto.Unmarshal(kv.Value, &roleReference)
 			if err != nil {
@@ -103,27 +103,27 @@ func main() {
 func checkHasPermission(rule *protos.PolicyRule, request *protos.ClientRequest) bool {
 	switch request.OneofResource.(type) {
 	case *protos.ClientRequest_Deployment:
-		if slices.Contains(rule.Resources, "deployments") && slices.Contains(rule.Verbs, request.Operation) {
+		if slices.Contains(rule.Resources, "deployment") && slices.Contains(rule.Verbs, request.Operation) {
 			return true
 		}
 	case *protos.ClientRequest_Role:
-		if slices.Contains(rule.Resources, "roles") && slices.Contains(rule.Verbs, request.Operation) {
+		if slices.Contains(rule.Resources, "role") && slices.Contains(rule.Verbs, request.Operation) {
 			return true
 		}
 	case *protos.ClientRequest_RoleBinding:
-		if slices.Contains(rule.Resources, "rolebindings") && slices.Contains(rule.Verbs, request.Operation) {
+		if slices.Contains(rule.Resources, "rolebinding") && slices.Contains(rule.Verbs, request.Operation) {
 			return true
 		}
 	case *protos.ClientRequest_User:
-		if slices.Contains(rule.Resources, "users") && slices.Contains(rule.Verbs, request.Operation) {
+		if slices.Contains(rule.Resources, "user") && slices.Contains(rule.Verbs, request.Operation) {
 			return true
 		}
 	case *protos.ClientRequest_Node:
-		if slices.Contains(rule.Resources, "nodes") && slices.Contains(rule.Verbs, request.Operation) {
+		if slices.Contains(rule.Resources, "node") && slices.Contains(rule.Verbs, request.Operation) {
 			return true
 		}
 	case *protos.ClientRequest_Pod:
-		if slices.Contains(rule.Resources, "pods") && slices.Contains(rule.Verbs, request.Operation) {
+		if slices.Contains(rule.Resources, "pod") && slices.Contains(rule.Verbs, request.Operation) {
 			return true
 		}
 	}
