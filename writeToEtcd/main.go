@@ -20,7 +20,7 @@ type server struct {
 }
 
 func ResourceFactory(req *protos.ClientRequest) resources.Resource {
-	switch _ := req.OneofResource.(type) {
+	switch req.OneofResource.(type) {
 	case *protos.ClientRequest_Deployment:
 		return &resources.DeploymentResource{Deployment: *req.GetDeployment()}
 	case *protos.ClientRequest_Role:
