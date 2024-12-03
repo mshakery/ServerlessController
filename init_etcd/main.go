@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	addUsers, addRoles, addRoleBinding := false, false, true
+	addUsers, addRoles, addRoleBinding := false, true, false
 
 	cli, err := etcdMiddleware.ConnectToEtcd()
 	if err != nil {
@@ -47,6 +47,10 @@ func main() {
 						Resources: []string{
 							"pod",
 							"deployment",
+							"node",
+							"role",
+							"user",
+							"role_binding",
 						},
 					},
 				},
