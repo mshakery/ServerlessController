@@ -21,7 +21,7 @@ func CreateResourceInEtcd(ctx context.Context, r Resource) bool {
 	for k, v := range KVs {
 		err := etcdMiddleware.WriteToEtcdFromPb(client, ctx, k, v)
 		if err != nil {
-			panic("Could not write to etcd. ")
+			panic(err)
 		}
 	}
 	return r.CreatePostHook(ctx)
