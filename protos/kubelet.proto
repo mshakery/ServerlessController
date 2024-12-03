@@ -17,7 +17,6 @@ message NodeMetrics {
   repeated PodMetrics pod_metrics = 1;
 }
 
-message Empty {}
 
 service Kubelet {
   rpc Metric(Empty) returns (NodeMetrics) {}

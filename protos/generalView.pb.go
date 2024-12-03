@@ -1708,6 +1708,42 @@ func (x *Response) GetStatus() string {
 	return ""
 }
 
+type Empty struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *Empty) Reset() {
+	*x = Empty{}
+	mi := &file_generalView_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Empty) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Empty) ProtoMessage() {}
+
+func (x *Empty) ProtoReflect() protoreflect.Message {
+	mi := &file_generalView_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Empty.ProtoReflect.Descriptor instead.
+func (*Empty) Descriptor() ([]byte, []int) {
+	return file_generalView_proto_rawDescGZIP(), []int{26}
+}
+
 var File_generalView_proto protoreflect.FileDescriptor
 
 var file_generalView_proto_rawDesc = []byte{
@@ -1980,9 +2016,9 @@ var file_generalView_proto_rawDesc = []byte{
 	0x75, 0x72, 0x63, 0x65, 0x22, 0x36, 0x0a, 0x08, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
 	0x12, 0x12, 0x0a, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04,
 	0x63, 0x6f, 0x64, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x42, 0x0f, 0x5a, 0x0d,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x73, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x73, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x22, 0x07, 0x0a, 0x05,
+	0x45, 0x6d, 0x70, 0x74, 0x79, 0x42, 0x0f, 0x5a, 0x0d, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x73, 0x2f,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1997,7 +2033,7 @@ func file_generalView_proto_rawDescGZIP() []byte {
 	return file_generalView_proto_rawDescData
 }
 
-var file_generalView_proto_msgTypes = make([]protoimpl.MessageInfo, 34)
+var file_generalView_proto_msgTypes = make([]protoimpl.MessageInfo, 35)
 var file_generalView_proto_goTypes = []any{
 	(*User)(nil),                 // 0: kubernetes.User
 	(*Metadata)(nil),             // 1: kubernetes.Metadata
@@ -2025,33 +2061,34 @@ var file_generalView_proto_goTypes = []any{
 	(*Node)(nil),                 // 23: kubernetes.Node
 	(*ClientRequest)(nil),        // 24: kubernetes.ClientRequest
 	(*Response)(nil),             // 25: kubernetes.Response
-	nil,                          // 26: kubernetes.Metadata.LabelsEntry
-	nil,                          // 27: kubernetes.Metadata.AnnotationsEntry
-	nil,                          // 28: kubernetes.Container.EnvEntry
-	nil,                          // 29: kubernetes.ResourceRequirements.LimitsEntry
-	nil,                          // 30: kubernetes.ResourceRequirements.RequestsEntry
-	nil,                          // 31: kubernetes.ResourceUsage.ResourceUsageEntry
-	nil,                          // 32: kubernetes.NodeSpec.TaintsEntry
-	nil,                          // 33: kubernetes.Capacity.ResourcesEntry
-	(*timestamp.Timestamp)(nil),  // 34: google.protobuf.Timestamp
+	(*Empty)(nil),                // 26: kubernetes.Empty
+	nil,                          // 27: kubernetes.Metadata.LabelsEntry
+	nil,                          // 28: kubernetes.Metadata.AnnotationsEntry
+	nil,                          // 29: kubernetes.Container.EnvEntry
+	nil,                          // 30: kubernetes.ResourceRequirements.LimitsEntry
+	nil,                          // 31: kubernetes.ResourceRequirements.RequestsEntry
+	nil,                          // 32: kubernetes.ResourceUsage.ResourceUsageEntry
+	nil,                          // 33: kubernetes.NodeSpec.TaintsEntry
+	nil,                          // 34: kubernetes.Capacity.ResourcesEntry
+	(*timestamp.Timestamp)(nil),  // 35: google.protobuf.Timestamp
 }
 var file_generalView_proto_depIdxs = []int32{
-	26, // 0: kubernetes.Metadata.labels:type_name -> kubernetes.Metadata.LabelsEntry
-	27, // 1: kubernetes.Metadata.annotations:type_name -> kubernetes.Metadata.AnnotationsEntry
+	27, // 0: kubernetes.Metadata.labels:type_name -> kubernetes.Metadata.LabelsEntry
+	28, // 1: kubernetes.Metadata.annotations:type_name -> kubernetes.Metadata.AnnotationsEntry
 	1,  // 2: kubernetes.Role.metadata:type_name -> kubernetes.Metadata
 	2,  // 3: kubernetes.Role.rules:type_name -> kubernetes.PolicyRule
 	1,  // 4: kubernetes.RoleBinding.metadata:type_name -> kubernetes.Metadata
 	6,  // 5: kubernetes.Container.ports:type_name -> kubernetes.Port
-	28, // 6: kubernetes.Container.env:type_name -> kubernetes.Container.EnvEntry
+	29, // 6: kubernetes.Container.env:type_name -> kubernetes.Container.EnvEntry
 	7,  // 7: kubernetes.Container.resources:type_name -> kubernetes.ResourceRequirements
-	29, // 8: kubernetes.ResourceRequirements.limits:type_name -> kubernetes.ResourceRequirements.LimitsEntry
-	30, // 9: kubernetes.ResourceRequirements.requests:type_name -> kubernetes.ResourceRequirements.RequestsEntry
+	30, // 8: kubernetes.ResourceRequirements.limits:type_name -> kubernetes.ResourceRequirements.LimitsEntry
+	31, // 9: kubernetes.ResourceRequirements.requests:type_name -> kubernetes.ResourceRequirements.RequestsEntry
 	5,  // 10: kubernetes.PodSpec.containers:type_name -> kubernetes.Container
-	31, // 11: kubernetes.ResourceUsage.resource_usage:type_name -> kubernetes.ResourceUsage.ResourceUsageEntry
+	32, // 11: kubernetes.ResourceUsage.resource_usage:type_name -> kubernetes.ResourceUsage.ResourceUsageEntry
 	12, // 12: kubernetes.PodStatus.conditions:type_name -> kubernetes.Condition
 	9,  // 13: kubernetes.PodStatus.resource_usage:type_name -> kubernetes.ResourceUsage
 	10, // 14: kubernetes.PodStatus.worker:type_name -> kubernetes.Worker
-	34, // 15: kubernetes.Condition.last_update:type_name -> google.protobuf.Timestamp
+	35, // 15: kubernetes.Condition.last_update:type_name -> google.protobuf.Timestamp
 	1,  // 16: kubernetes.Pod.metadata:type_name -> kubernetes.Metadata
 	8,  // 17: kubernetes.Pod.spec:type_name -> kubernetes.PodSpec
 	11, // 18: kubernetes.Pod.status:type_name -> kubernetes.PodStatus
@@ -2062,13 +2099,13 @@ var file_generalView_proto_depIdxs = []int32{
 	1,  // 23: kubernetes.Deployment.metadata:type_name -> kubernetes.Metadata
 	14, // 24: kubernetes.Deployment.spec:type_name -> kubernetes.DeploymentSpec
 	16, // 25: kubernetes.Deployment.status:type_name -> kubernetes.DeploymentStatus
-	32, // 26: kubernetes.NodeSpec.taints:type_name -> kubernetes.NodeSpec.TaintsEntry
+	33, // 26: kubernetes.NodeSpec.taints:type_name -> kubernetes.NodeSpec.TaintsEntry
 	12, // 27: kubernetes.NodeStatus.condition:type_name -> kubernetes.Condition
 	21, // 28: kubernetes.NodeStatus.capacity:type_name -> kubernetes.Capacity
 	21, // 29: kubernetes.NodeStatus.allocatable:type_name -> kubernetes.Capacity
 	22, // 30: kubernetes.NodeStatus.nodeInfo:type_name -> kubernetes.NodeInfo
 	19, // 31: kubernetes.NodeStatus.pods:type_name -> kubernetes.PodList
-	33, // 32: kubernetes.Capacity.resources:type_name -> kubernetes.Capacity.ResourcesEntry
+	34, // 32: kubernetes.Capacity.resources:type_name -> kubernetes.Capacity.ResourcesEntry
 	1,  // 33: kubernetes.Node.metadata:type_name -> kubernetes.Metadata
 	18, // 34: kubernetes.Node.spec:type_name -> kubernetes.NodeSpec
 	20, // 35: kubernetes.Node.status:type_name -> kubernetes.NodeStatus
@@ -2078,7 +2115,7 @@ var file_generalView_proto_depIdxs = []int32{
 	0,  // 39: kubernetes.ClientRequest.user:type_name -> kubernetes.User
 	23, // 40: kubernetes.ClientRequest.node:type_name -> kubernetes.Node
 	13, // 41: kubernetes.ClientRequest.pod:type_name -> kubernetes.Pod
-	34, // 42: kubernetes.ClientRequest.timestamp:type_name -> google.protobuf.Timestamp
+	35, // 42: kubernetes.ClientRequest.timestamp:type_name -> google.protobuf.Timestamp
 	43, // [43:43] is the sub-list for method output_type
 	43, // [43:43] is the sub-list for method input_type
 	43, // [43:43] is the sub-list for extension type_name
@@ -2105,7 +2142,7 @@ func file_generalView_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_generalView_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   34,
+			NumMessages:   35,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
