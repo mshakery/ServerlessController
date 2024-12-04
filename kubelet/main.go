@@ -25,6 +25,7 @@ var podsToRun []*protos.Pod
 func (s *server) runAPod(ctx context.Context, pod *protos.Pod) (protos.Empty, error) {
 	// command
 	podsToRun = append(podsToRun, pod)
+	fmt.Printf(strconv.Itoa(len(podsToRun)))
 	return protos.Empty{}, nil
 }
 
