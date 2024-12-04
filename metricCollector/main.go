@@ -25,7 +25,7 @@ type server struct {
 func (s *server) GatherMetric(ctx context.Context, in *protos.NodeName) (*protos.Empty, error) {
 	host := fmt.Sprintf("%s:50051", in.GetName())
 	// temporary: todo
-	host = fmt.Sprintf("%s:50056", in.GetName())
+	host = fmt.Sprintf("localhost:50056")
 	// end temporary
 
 	conn, err2 := grpc.NewClient(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -43,7 +43,7 @@ func (s *server) GatherMetric(ctx context.Context, in *protos.NodeName) (*protos
 	response, err3 := c.Metric(context.Background(), &inp)
 
 	if err3 != nil {
-		log.Fatalf("metrics: could not connect: %v", err2)
+		log.Fatalf("metrics: could not connect: %v", err3)
 	}
 	nodeCpuUsage, nodeMemoryUsage := 0, 0
 	for _, podMetric := range response.GetPodMetrics() {
