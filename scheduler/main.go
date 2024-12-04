@@ -98,7 +98,7 @@ func (s *server) Schedule(ctx context.Context, in *protos.PodDetail) (*protos.Em
 	c := protos.NewKubeletClient(conn)
 
 	resp, err3 := c.RunAPod(context.Background(), &podObject)
-	fmt.Printf("im feeling lucky %s", resp)
+	fmt.Printf("im feeling lucky %s", resp, &podObject)
 	if err3 != nil {
 		log.Fatalf("kubelet run a pod error: %v", err3)
 	}
