@@ -31,7 +31,7 @@ func main() {
 			// end temporary
 
 			if err2 != nil {
-				log.Fatalf("metrics: could not connect: %v", err2)
+				log.Fatalf("metrics: could not connect 1: %v", err2)
 			}
 			c := protos.NewMetricCollectorClient(conn)
 
@@ -39,7 +39,7 @@ func main() {
 			_, err3 := c.GatherMetric(context.Background(), &in)
 
 			if err3 != nil {
-				log.Fatalf("metrics: could not connect: %v", err2)
+				log.Fatalf("metrics: could not connect 2: %v", err3)
 			}
 			log.Printf("metrics are collected for node %s\n", NodeName)
 		}
