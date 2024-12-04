@@ -28,7 +28,7 @@ func (s *server) runAPod(ctx context.Context, pod *protos.Pod) (protos.Empty, er
 	return protos.Empty{}, nil
 }
 
-func (s *server) Metrics(ctx context.Context, in *protos.Empty) (*protos.NodeMetrics, error) {
+func (s *server) Metric(ctx context.Context, in *protos.Empty) (*protos.NodeMetrics, error) {
 	metrics := protos.NodeMetrics{}
 	var result []*protos.PodMetrics
 	for _, pod := range podsToRun {
