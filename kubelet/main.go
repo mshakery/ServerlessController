@@ -22,7 +22,7 @@ type server struct {
 
 var podsToRun []*protos.Pod
 
-func (s *server) runAPod(ctx context.Context, pod *protos.Pod) (protos.Empty, error) {
+func (s *server) RunAPod(ctx context.Context, pod *protos.Pod) (protos.Empty, error) {
 	// command
 	podsToRun = append(podsToRun, pod)
 	fmt.Printf(strconv.Itoa(len(podsToRun)))
