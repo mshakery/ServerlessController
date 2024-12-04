@@ -48,7 +48,7 @@ func (s *server) GatherMetric(ctx context.Context, in *protos.NodeName) (*protos
 	nodeCpuUsage, nodeMemoryUsage := 0, 0
 	for _, podMetric := range response.GetPodMetrics() {
 		podKey := fmt.Sprintf("/cluster/resources/pod/%s/%s/usage", podMetric.GetNamespace(), podMetric.GetName())
-		ru := protos.ResourceUsage{}
+		ru := protos.ResourceUsage{ResourceUsage: make(map[string]string)}
 		ru.ResourceUsage["cpu"] = podMetric.GetCpuUsage()
 		ru.ResourceUsage["memory"] = podMetric.GetMemoryUsage()
 
