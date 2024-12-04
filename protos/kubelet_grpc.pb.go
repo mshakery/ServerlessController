@@ -20,7 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	Kubelet_Metric_FullMethodName  = "/kubernetes.Kubelet/Metric"
-	Kubelet_RunAPod_FullMethodName = "/kubernetes.Kubelet/run_a_pod"
+	Kubelet_RunAPod_FullMethodName = "/kubernetes.Kubelet/RunAPod"
 )
 
 // KubeletClient is the client API for Kubelet service.
@@ -150,7 +150,7 @@ var Kubelet_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Kubelet_Metric_Handler,
 		},
 		{
-			MethodName: "run_a_pod",
+			MethodName: "RunAPod",
 			Handler:    _Kubelet_RunAPod_Handler,
 		},
 	},
