@@ -6,6 +6,7 @@ import (
 	"fmt"
 	protos "github.com/mshakery/ServerlessController/protos"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
 	"strconv"
@@ -58,6 +59,7 @@ func main() {
 	}
 	s := grpc.NewServer()
 	protos.RegisterKubeletServer(s, &server{})
+	reflection.Register(s)
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
