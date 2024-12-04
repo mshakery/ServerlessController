@@ -25,6 +25,11 @@ func main() {
 		if strings.Count(string(kv.Key), "/") == 4 {
 			NodeName := path.Base(string(kv.Key))
 			conn, err2 := grpc.NewClient("metric-collector:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+
+			// temporary: todo
+			conn, err2 = grpc.NewClient("localhost:50055", grpc.WithTransportCredentials(insecure.NewCredentials()))
+			// end temporary
+
 			if err2 != nil {
 				log.Fatalf("metrics: could not connect: %v", err2)
 			}
