@@ -18,7 +18,7 @@ import (
 )
 
 var (
-	port = flag.Int("port", 50054, "The server port")
+	port = flag.Int("port", 50051, "The server port")
 )
 
 type server struct {
@@ -88,9 +88,6 @@ func (s *server) Schedule(ctx context.Context, in *protos.PodDetail) (*protos.Em
 	etcd.WriteToEtcdFromPb(client, ctx, podWorkerKey, &bestWorker)
 
 	host := fmt.Sprintf("%s:50055", bestWorker.GetWorker())
-	// temporary: todo
-	host = fmt.Sprintf("localhost:50056")
-	// end temporary
 	conn, err2 := grpc.NewClient(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err2 != nil {
 		log.Fatalf("kubelet node: could not connect: %v", err2)

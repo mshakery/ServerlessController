@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	port = flag.Int("port", 50055, "The server port")
+	port = flag.Int("port", 50051, "The server port")
 )
 
 type server struct {
@@ -24,9 +24,6 @@ type server struct {
 
 func (s *server) GatherMetric(ctx context.Context, in *protos.NodeName) (*protos.Empty, error) {
 	host := fmt.Sprintf("%s:50051", in.GetName())
-	// temporary: todo
-	host = fmt.Sprintf("localhost:50056")
-	// end temporary
 
 	conn, err2 := grpc.NewClient(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	client, err := etcd.ConnectToEtcd()
