@@ -1,0 +1,28 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: authentication-function
+  namespace: default
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0"        # Scale to 0 when idle
+        autoscaling.knative.dev/maxScale: "10"       # Maximum of 10 replicas
+        autoscaling.knative.dev/target: "100"         # Target concurrency (50 requests per pod)
+    spec:
+      containers:
+        - image: pixelgoblin/serverless_controller_dsg9:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 50051                   # Default port for your application
+          env:
+            - name: ENV_VAR
+              value: "value"                        # Add any environment variables
+          resources:
+            requests:
+              cpu: "100m"                           # Minimum CPU request per pod
+              memory: "128Mi"                       # Minimum memory request per pod
+            limits:
+              cpu: "500m"                           # Maximum CPU limit per pod
+              memory: "256Mi"   
