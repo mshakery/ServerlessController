@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-var endpoints = []string{"localhost:2379"}
+var endpoints = []string{"14.102.10.254:2379"}
 
 func ConnectToEtcd() (*clientv3.Client, error) {
 	cli, err := clientv3.New(clientv3.Config{
