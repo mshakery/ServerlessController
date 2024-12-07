@@ -1,28 +1,161 @@
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: authentication-function
+  name: authentication
   namespace: default
 spec:
   template:
     metadata:
       annotations:
-        autoscaling.knative.dev/minScale: "0"        # Scale to 0 when idle
-        autoscaling.knative.dev/maxScale: "10"       # Maximum of 10 replicas
-        autoscaling.knative.dev/target: "100"         # Target concurrency (50 requests per pod)
+        autoscaling.knative.dev/minScale: "0"        
+        autoscaling.knative.dev/maxScale: "10"      
+        autoscaling.knative.dev/target: "100"        
     spec:
       containers:
-        - image: pixelgoblin/serverless_controller_dsg9:latest
+        - image: mascorpion/ds:latest
           imagePullPolicy: Always
+          command: ["authentication/authentication"]
           ports:
-            - containerPort: 50051                   # Default port for your application
+            - containerPort: 50051                   
           env:
             - name: ENV_VAR
-              value: "value"                        # Add any environment variables
+              value: "value"                    
           resources:
             requests:
-              cpu: "100m"                           # Minimum CPU request per pod
-              memory: "128Mi"                       # Minimum memory request per pod
+              cpu: "100m"                       
+              memory: "128Mi"             
             limits:
-              cpu: "500m"                           # Maximum CPU limit per pod
+              cpu: "500m"                     
               memory: "256Mi"   
+
+---
+
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: authorization
+  namespace: default
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0"        
+        autoscaling.knative.dev/maxScale: "10"      
+        autoscaling.knative.dev/target: "100"        
+    spec:
+      containers:
+        - image: mascorpion/ds:latest
+          imagePullPolicy: Always
+          command: ["authorization/authorization"]
+          ports:
+            - containerPort: 50051                   
+          env:
+            - name: ENV_VAR
+              value: "value"                    
+          resources:
+            requests:
+              cpu: "100m"                       
+              memory: "128Mi"             
+            limits:
+              cpu: "500m"                     
+              memory: "256Mi"   
+
+
+---
+
+
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: scheduler
+  namespace: default
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "1"        
+        autoscaling.knative.dev/maxScale: "1"      
+        autoscaling.knative.dev/target: "100"        
+    spec:
+      containers:
+        - image: mascorpion/ds:latest
+          imagePullPolicy: Always
+          command: ["scheduler/scheduler"]
+          ports:
+            - containerPort: 50051                   
+          env:
+            - name: ENV_VAR
+              value: "value"                    
+          resources:
+            requests:
+              cpu: "100m"                       
+              memory: "128Mi"             
+            limits:
+              cpu: "500m"                     
+              memory: "256Mi"   
+
+---
+
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: write-to-etcd
+  namespace: default
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0"        
+        autoscaling.knative.dev/maxScale: "10"      
+        autoscaling.knative.dev/target: "100"        
+    spec:
+      containers:
+        - image: mascorpion/ds:latest
+          imagePullPolicy: Always
+          command: ["writeToEtcd/writeToEtcd"]
+          ports:
+            - containerPort: 50051                   
+          env:
+            - name: ENV_VAR
+              value: "value"                    
+          resources:
+            requests:
+              cpu: "100m"                       
+              memory: "128Mi"             
+            limits:
+              cpu: "500m"                     
+              memory: "256Mi"   
+
+---
+
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: metric-collector
+  namespace: default
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0"        
+        autoscaling.knative.dev/maxScale: "10"      
+        autoscaling.knative.dev/target: "100"        
+    spec:
+      containers:
+        - image: mascorpion/ds:latest
+          imagePullPolicy: Always
+          command: ["metricCollector/metricCollector"]
+          ports:
+            - containerPort: 50051                   
+          env:
+            - name: ENV_VAR
+              value: "value"                    
+          resources:
+            requests:
+              cpu: "100m"                       
+              memory: "128Mi"             
+            limits:
+              cpu: "500m"                     
+              memory: "256Mi"  
+
+---

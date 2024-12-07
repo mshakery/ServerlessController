@@ -1,0 +1,34 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: metric-collector-cronjob
+  namespace: default
+spec:
+  schedule: "*/1 * * * *" # Runs every minute
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: metric-collector-cronjobc
+              image: mascorpion/ds:latest
+              imagePullPolicy: Always
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  for i in $(seq 1 3); do
+                    start_time=$(date +%s)
+                    ./metricCollectorCronjob/metricCollectorCronjob
+                    sleep 2 # Simulate the task running for 2 seconds
+                    end_time=$(date +%s)
+                    elapsed_time=$((end_time - start_time))
+                    sleep_duration=$((20 - elapsed_time))
+                    if [ $sleep_duration -gt 0 ]; then
+                      echo "Sleeping for $sleep_duration seconds..."
+                      sleep $sleep_duration
+                    else
+                      echo "Task took longer than 20 seconds. Skipping sleep."
+                    fi
+                  done
+          restartPolicy: OnFailure
