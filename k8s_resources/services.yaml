@@ -16,11 +16,11 @@ spec:
           imagePullPolicy: Always
           command: ["authentication/authentication"]
           ports:
-            - containerPort: 80   
+            - containerPort: 50051   
               name: h2c                 
           env:
             - name: ENV_VAR
-              value: "value2"                    
+              value: "value4"                    
           resources:
             requests:
               cpu: "100m"                       
@@ -49,11 +49,11 @@ spec:
           imagePullPolicy: Always
           command: ["authorization/authorization"]
           ports:
-            - containerPort: 80     
+            - containerPort: 50051     
               name: h2c              
           env:
             - name: ENV_VAR
-              value: "value2"                    
+              value: "value4"                    
           resources:
             requests:
               cpu: "100m"                       
@@ -84,11 +84,11 @@ spec:
           imagePullPolicy: Always
           command: ["scheduler/scheduler"]
           ports:
-            - containerPort: 80  
+            - containerPort: 50051  
               name: h2c                  
           env:
             - name: ENV_VAR
-              value: "value2"                    
+              value: "value4"                    
           resources:
             requests:
               cpu: "100m"                       
@@ -117,11 +117,11 @@ spec:
           imagePullPolicy: Always
           command: ["writeToEtcd/writeToEtcd"]
           ports:
-            - containerPort: 80  
+            - containerPort: 50051  
               name: h2c                  
           env:
             - name: ENV_VAR
-              value: "value2"                    
+              value: "value4"                    
           resources:
             requests:
               cpu: "100m"                       
@@ -150,11 +150,11 @@ spec:
           imagePullPolicy: Always
           command: ["metricCollector/metricCollector"]
           ports:
-            - containerPort: 80    
+            - containerPort: 50051    
               name: h2c                
           env:
             - name: ENV_VAR
-              value: "value2"                    
+              value: "value4"                    
           resources:
             requests:
               cpu: "100m"                       
