@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	addUsers, addRoles, addRoleBinding := false, true, false
+	addUsers, addRoles, addRoleBinding := true, true, true
 
 	cli, err := etcdMiddleware.ConnectToEtcd()
 	if err != nil {
