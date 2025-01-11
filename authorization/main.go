@@ -136,7 +136,7 @@ func checkHasPermission(rule *protos.PolicyRule, request *protos.ClientRequest) 
 }
 
 func callWrite2Etcd(ctx context.Context, client_request *protos.ClientRequest, uid string) (*protos.Response, error) {
-	conn, err := grpc.NewClient("http://write-to-etcd.default.10.103.172.226.sslip.io", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient("http://write-to-etcd.default.10.103.172.226.sslip.io:80", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("could not connect: %v", err)
 	}
