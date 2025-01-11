@@ -76,7 +76,7 @@ func callAuthorization(ctx context.Context, client_request *protos.ClientRequest
 	md := metadata.Pairs("Host", "authorization.default.10.103.172.226.sslip.io")
 	ctx = metadata.NewOutgoingContext(ctx, md)
 	
-	conn, err := grpc.NewClient("authorization:80", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient("kourier.kourier-system.svc.cluster.local:80", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("could not connect: %v", err)
 	}
