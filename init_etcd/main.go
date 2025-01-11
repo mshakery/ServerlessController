@@ -43,7 +43,7 @@ func main() {
 				},
 				Rules: []*protos.PolicyRule{
 					{
-						Verbs: []string{"create"},
+						Verbs: []string{"create", "retrieve", "update", "delete"},
 						Resources: []string{
 							"pod",
 							"deployment",
