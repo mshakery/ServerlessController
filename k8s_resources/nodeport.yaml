@@ -1,0 +1,17 @@
+apiVersion: networking.internal.knative.dev/v1alpha1
+kind: Ingress
+metadata:
+  name: authentication-ingress
+  namespace: default
+spec:
+  rules:
+    - hosts:
+        - "*"
+      http:
+        paths:
+          - path: /*
+            splits:
+              - serviceName: authentication
+                serviceNamespace: default
+                servicePort: 50051
+                percent: 100
