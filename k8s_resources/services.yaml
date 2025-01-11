@@ -16,7 +16,7 @@ spec:
           imagePullPolicy: Always
           command: ["authentication/authentication"]
           ports:
-            - containerPort: 50051   
+            - containerPort: 80   
               name: h2c                 
           env:
             - name: ENV_VAR
@@ -49,7 +49,7 @@ spec:
           imagePullPolicy: Always
           command: ["authorization/authorization"]
           ports:
-            - containerPort: 50051     
+            - containerPort: 80     
               name: h2c              
           env:
             - name: ENV_VAR
@@ -84,7 +84,7 @@ spec:
           imagePullPolicy: Always
           command: ["scheduler/scheduler"]
           ports:
-            - containerPort: 50051  
+            - containerPort: 80  
               name: h2c                  
           env:
             - name: ENV_VAR
@@ -117,7 +117,7 @@ spec:
           imagePullPolicy: Always
           command: ["writeToEtcd/writeToEtcd"]
           ports:
-            - containerPort: 50051  
+            - containerPort: 80  
               name: h2c                  
           env:
             - name: ENV_VAR
@@ -150,7 +150,7 @@ spec:
           imagePullPolicy: Always
           command: ["metricCollector/metricCollector"]
           ports:
-            - containerPort: 50051    
+            - containerPort: 80    
               name: h2c                
           env:
             - name: ENV_VAR

@@ -13,5 +13,5 @@ spec:
             splits:
               - serviceName: authentication
                 serviceNamespace: default
-                servicePort: 50051
+                servicePort: 80
                 percent: 100

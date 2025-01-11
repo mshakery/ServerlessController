@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	port = flag.Int("port", 50051, "The server port")
+	port = flag.Int("port", 80, "The server port")
 )
 
 type server struct {
@@ -72,7 +72,7 @@ func (s *server) Auth(ctx context.Context, in *protos.AuthenticationRequest) (*p
 }
 
 func callAuthorization(ctx context.Context, client_request *protos.ClientRequest, uid string) (*protos.Response, error) {
-	conn, err := grpc.NewClient("authorization:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient("http://authorization", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("could not connect: %v", err)
 	}
