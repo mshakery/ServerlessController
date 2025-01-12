@@ -24,7 +24,7 @@ func main() {
 	for _, kv := range read.Kvs {
 		if strings.Count(string(kv.Key), "/") == 4 {
 			NodeName := path.Base(string(kv.Key))
-			conn, err2 := grpc.NewClient("node-checker.default.10.103.172.226.sslip.io:80", grpc.WithTransportCredentials(insecure.NewCredentials()))
+			conn, err2 := grpc.NewClient("node-checker.default.10.101.174.165.sslip.io:80", grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 			if err2 != nil {
 				log.Fatalf("node-checker: could not connect 1: %v", err2)

@@ -9,11 +9,10 @@ spec:
       annotations:
         autoscaling.knative.dev/minScale: "0"        
         autoscaling.knative.dev/maxScale: "10"      
-        autoscaling.knative.dev/target: "100"        
+        autoscaling.knative.dev/target: "50"        
     spec:
       containers:
         - image: mascorpion/ds:latest
-          imagePullPolicy: Always
           command: ["authentication/authentication"]
           ports:
             - containerPort: 50051   
@@ -42,11 +41,10 @@ spec:
       annotations:
         autoscaling.knative.dev/minScale: "0"        
         autoscaling.knative.dev/maxScale: "10"      
-        autoscaling.knative.dev/target: "100"        
+        autoscaling.knative.dev/target: "50"        
     spec:
       containers:
         - image: mascorpion/ds:latest
-          imagePullPolicy: Always
           command: ["authorization/authorization"]
           ports:
             - containerPort: 50051     
@@ -58,9 +56,6 @@ spec:
             requests:
               cpu: "100m"                       
               memory: "128Mi"             
-            limits:
-              cpu: "500m"                     
-              memory: "256Mi"   
 
 
 ---
@@ -77,11 +72,10 @@ spec:
       annotations:
         autoscaling.knative.dev/minScale: "1"        
         autoscaling.knative.dev/maxScale: "1"      
-        autoscaling.knative.dev/target: "100"        
+        autoscaling.knative.dev/target: "500"        
     spec:
       containers:
         - image: mascorpion/ds:latest
-          imagePullPolicy: Always
           command: ["scheduler/scheduler"]
           ports:
             - containerPort: 50051  
@@ -93,9 +87,6 @@ spec:
             requests:
               cpu: "100m"                       
               memory: "128Mi"             
-            limits:
-              cpu: "500m"                     
-              memory: "256Mi"   
 
 ---
 
@@ -110,11 +101,10 @@ spec:
       annotations:
         autoscaling.knative.dev/minScale: "0"        
         autoscaling.knative.dev/maxScale: "10"      
-        autoscaling.knative.dev/target: "100"        
+        autoscaling.knative.dev/target: "50"        
     spec:
       containers:
         - image: mascorpion/ds:latest
-          imagePullPolicy: Always
           command: ["writeToEtcd/writeToEtcd"]
           ports:
             - containerPort: 50051  
@@ -126,9 +116,6 @@ spec:
             requests:
               cpu: "100m"                       
               memory: "128Mi"             
-            limits:
-              cpu: "500m"                     
-              memory: "256Mi"   
 
 ---
 
@@ -143,11 +130,10 @@ spec:
       annotations:
         autoscaling.knative.dev/minScale: "0"        
         autoscaling.knative.dev/maxScale: "10"      
-        autoscaling.knative.dev/target: "100"        
+        autoscaling.knative.dev/target: "200"        
     spec:
       containers:
         - image: mascorpion/ds:latest
-          imagePullPolicy: Always
           command: ["metricCollector/metricCollector"]
           ports:
             - containerPort: 50051    
@@ -159,8 +145,5 @@ spec:
             requests:
               cpu: "100m"                       
               memory: "128Mi"             
-            limits:
-              cpu: "500m"                     
-              memory: "256Mi"  
 
 ---
