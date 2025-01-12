@@ -153,17 +153,15 @@ message Deployment {
 
 
 
-
-
-
-
-
 // node
+message Unschedulable {
+  bool condition = 1;
+}
 
 // NodeSpec defines the specification of a Node.
 message NodeSpec {
   string podCIDR = 1;                // CIDR range for Pods on the node
-  bool unschedulable = 2;            // Indicates if the node is schedulable
+  Unschedulable unschedulable = 2;            // Indicates if the node is schedulable
   map<string, string> taints = 3;    // Taints applied to the node
 }
 

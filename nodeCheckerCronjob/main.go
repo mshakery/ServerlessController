@@ -24,20 +24,20 @@ func main() {
 	for _, kv := range read.Kvs {
 		if strings.Count(string(kv.Key), "/") == 4 {
 			NodeName := path.Base(string(kv.Key))
-			conn, err2 := grpc.NewClient("metric-collector.default.10.103.172.226.sslip.io:80", grpc.WithTransportCredentials(insecure.NewCredentials()))
+			conn, err2 := grpc.NewClient("node-checker.default.10.103.172.226.sslip.io:80", grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 			if err2 != nil {
-				log.Fatalf("metrics: could not connect 1: %v", err2)
+				log.Fatalf("node-checker: could not connect 1: %v", err2)
 			}
-			c := protos.NewMetricCollectorClient(conn)
+			c := protos.NewNodeCheckerClient(conn)
 
-			in := protos.NodeName{Name: NodeName}
-			_, err3 := c.GatherMetric(context.Background(), &in)
+			in := protos.NodeNamee{Name: NodeName}
+			_, err3 := c.CheckNode(context.Background(), &in)
 
 			if err3 != nil {
-				log.Fatalf("metrics: could not connect 2: %v", err3)
+				log.Fatalf("node-checker: could not connect 2: %v", err3)
 			}
-			log.Printf("metrics are collected for node %s\n", NodeName)
+			log.Printf("node %s checked\n", NodeName)
 		}
 	}
 }
