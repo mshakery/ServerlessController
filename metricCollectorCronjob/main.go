@@ -17,7 +17,7 @@ func main() {
 		panic("Could not connect to etcd. ")
 	}
 	defer client.Close()
-	ctx := context.TODO()
+	ctx := context.Background()
 	read, err := etcd.ReadFromEtcd(client, ctx, "/cluster/resources/node/", true)
 	if err != nil {
 	}
