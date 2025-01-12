@@ -72,7 +72,7 @@ func (s *server) Auth(ctx context.Context, in *protos.AuthenticationRequest) (*p
 }
 
 func callAuthorization(ctx context.Context, client_request *protos.ClientRequest, uid string) (*protos.Response, error) {
-	conn, err := grpc.NewClient("authorization.default.10.103.172.226.sslip.io:80", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient("authorization.default.10.101.174.165.sslip.io:80", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("could not connect: %v", err)
 	}
