@@ -23,7 +23,7 @@ type server struct {
 }
 
 func (s *server) GatherMetric(ctx context.Context, in *protos.NodeName) (*protos.Empty, error) {
-	host := fmt.Sprintf("%s:80", in.GetName())
+	host := fmt.Sprintf("%s:50051", in.GetName())
 
 	conn, err2 := grpc.NewClient(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	client, err := etcd.ConnectToEtcd()

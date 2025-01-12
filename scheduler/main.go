@@ -87,7 +87,7 @@ func (s *server) Schedule(ctx context.Context, in *protos.PodDetail) (*protos.Em
 	bestWorker := protos.Worker{Worker: nodesWithSufficientResource[0].name}
 	etcd.WriteToEtcdFromPb(client, ctx, podWorkerKey, &bestWorker)
 
-	host := fmt.Sprintf("%s:50055", bestWorker.GetWorker())
+	host := fmt.Sprintf("%s:50051", bestWorker.GetWorker())
 	conn, err2 := grpc.NewClient(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err2 != nil {
 		log.Fatalf("kubelet node: could not connect: %v", err2)
