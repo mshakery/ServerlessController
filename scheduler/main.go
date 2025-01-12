@@ -101,7 +101,7 @@ func (s *server) Schedule(ctx context.Context, in *protos.PodDetail) (*protos.Em
 	if err3 != nil {
 		log.Fatalf("kubelet run a pod error: %v", err3)
 	}
-	fmt.Println("Time took to schedule a pod:", startTime-time.Now().Unix())
+	fmt.Println("Time took to schedule a pod:", time.Now().Unix()-startTime)
 	return &protos.Empty{}, nil
 }
 
