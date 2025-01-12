@@ -12,6 +12,7 @@ import (
 	"log"
 	"net"
 	"strconv"
+	"time"
 )
 
 var (
@@ -60,6 +61,7 @@ func (s *server) GatherMetric(ctx context.Context, in *protos.NodeName) (*protos
 	}
 	nodeKey := fmt.Sprintf("/cluster/resources/node/%s", in.GetName())
 	NodeAllocatableKey := fmt.Sprintf("/cluster/resources/node/%s/allocatable", in.GetName())
+	NodeLastUpdateKey := fmt.Sprintf("/cluster/resources/node/%s/update/time", in.GetName())
 	var nodeObject = protos.Node{}
 	etcd.ReadOneFromEtcdToPb(client, ctx, nodeKey, &nodeObject)
 	nodeFreeResource := nodeObject.GetStatus().GetCapacity()
@@ -68,6 +70,7 @@ func (s *server) GatherMetric(ctx context.Context, in *protos.NodeName) (*protos
 	nodeFreeResource.Resources["cpu"] = strconv.Itoa(nodeCpuCapacity - nodeCpuUsage)
 	nodeFreeResource.Resources["memory"] = strconv.Itoa(nodeMemoryCapacity - nodeMemoryUsage)
 	etcd.WriteToEtcdFromPb(client, ctx, NodeAllocatableKey, nodeFreeResource)
+	etcd.WriteToEtcd(client, ctx, NodeLastUpdateKey, time.Now().Format("2006-01-02 15:04:05"))
 	return &protos.Empty{}, nil
 }
 
