@@ -15,6 +15,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var (
@@ -68,6 +69,7 @@ func calculatePodRequestedResource(pod *protos.Pod) (cpuReq int, memoryReq int) 
 }
 
 func (s *server) Schedule(ctx context.Context, in *protos.PodDetail) (*protos.Empty, error) {
+	startTime := time.Now().Unix()
 	client, err := etcd.ConnectToEtcd()
 	if err != nil {
 		panic("Could not connect to etcd. ")
@@ -99,6 +101,7 @@ func (s *server) Schedule(ctx context.Context, in *protos.PodDetail) (*protos.Em
 	if err3 != nil {
 		log.Fatalf("kubelet run a pod error: %v", err3)
 	}
+	fmt.Println("Time took to schedule a pod:", time.Now().Unix()-startTime)
 	return &protos.Empty{}, nil
 }
 
