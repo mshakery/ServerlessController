@@ -281,6 +281,18 @@ func main() {
 				fmt.Printf("fail. %s", err.Error())
 				return
 			}
+			ku2 := fmt.Sprintf("/cluster/resources/node/%s/allocatable", node.Metadata.Name)
+			err = etcdMiddleware.WriteToEtcdFromPb(cli, context.Background(), ku2, node.GetStatus().GetCapacity())
+			if err != nil {
+				fmt.Printf("fail. %s", err.Error())
+				return
+			}
+			ku3 := fmt.Sprintf("/cluster/resources/node/%s/unschedulable", node.Metadata.Name)
+			err = etcdMiddleware.WriteToEtcdFromPb(cli, context.Background(), ku3, node.Spec.Unschedulable)
+			if err != nil {
+				fmt.Printf("fail. %s", err.Error())
+				return
+			}
 			fmt.Printf("node soccess ")
 		}
 	}
