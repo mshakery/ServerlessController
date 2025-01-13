@@ -3,12 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/mshakery/ServerlessController/etcdMiddleware"
 	"github.com/mshakery/ServerlessController/protos"
 )
 
 func main() {
-	addUsers, addRoles, addRoleBinding := true, true, true
+	addUsers, addRoles, addRoleBinding, addNode := true, true, true, true
 
 	cli, err := etcdMiddleware.ConnectToEtcd()
 	if err != nil {
@@ -116,4 +117,171 @@ func main() {
 		}
 	}
 
+	if addNode {
+		podlist := protos.PodList{
+			PodNames: []string{},
+		}
+		nodes := []protos.Node{
+			{
+				Metadata: &protos.Metadata{
+					Name:      "kubelet-0",
+					Namespace: "default",
+					Uid:       "kubelet-0",
+				},
+				Spec: &protos.NodeSpec{
+					Unschedulable: &protos.Unschedulable{
+						Condition: false,
+					},
+				},
+				Status: &protos.NodeStatus{
+					Condition: &protos.Condition{
+						LastUpdate: &timestamp.Timestamp{Seconds: 1705062732},
+					},
+					Capacity: &protos.Capacity{
+						Resources: map[string]string{
+							"cpu":    "10000",
+							"memory": "8192000",
+						},
+					},
+					Allocatable: &protos.Capacity{
+						Resources: map[string]string{
+							"cpu":    "10000",
+							"memory": "8192000",
+						},
+					},
+					Pods: &podlist,
+				},
+			},
+			{
+				Metadata: &protos.Metadata{
+					Name:      "kubelet-1",
+					Namespace: "default",
+					Uid:       "kubelet-1",
+				},
+				Spec: &protos.NodeSpec{
+					Unschedulable: &protos.Unschedulable{
+						Condition: false,
+					},
+				},
+				Status: &protos.NodeStatus{
+					Condition: &protos.Condition{
+						LastUpdate: &timestamp.Timestamp{Seconds: 1705062732},
+					},
+					Capacity: &protos.Capacity{
+						Resources: map[string]string{
+							"cpu":    "10000",
+							"memory": "8192000",
+						},
+					},
+					Allocatable: &protos.Capacity{
+						Resources: map[string]string{
+							"cpu":    "10000",
+							"memory": "8192000",
+						},
+					},
+					Pods: &podlist,
+				},
+			},
+			{
+				Metadata: &protos.Metadata{
+					Name:      "kubelet-2",
+					Namespace: "default",
+					Uid:       "kubelet-2",
+				},
+				Spec: &protos.NodeSpec{
+					Unschedulable: &protos.Unschedulable{
+						Condition: false,
+					},
+				},
+				Status: &protos.NodeStatus{
+					Condition: &protos.Condition{
+						LastUpdate: &timestamp.Timestamp{Seconds: 1705062732},
+					},
+					Capacity: &protos.Capacity{
+						Resources: map[string]string{
+							"cpu":    "10000",
+							"memory": "8192000",
+						},
+					},
+					Allocatable: &protos.Capacity{
+						Resources: map[string]string{
+							"cpu":    "10000",
+							"memory": "8192000",
+						},
+					},
+					Pods: &podlist,
+				},
+			},
+			{
+				Metadata: &protos.Metadata{
+					Name:      "kubelet-3",
+					Namespace: "default",
+					Uid:       "kubelet-3",
+				},
+				Spec: &protos.NodeSpec{
+					Unschedulable: &protos.Unschedulable{
+						Condition: false,
+					},
+				},
+				Status: &protos.NodeStatus{
+					Condition: &protos.Condition{
+						LastUpdate: &timestamp.Timestamp{Seconds: 1705062732},
+					},
+					Capacity: &protos.Capacity{
+						Resources: map[string]string{
+							"cpu":    "10000",
+							"memory": "8192000",
+						},
+					},
+					Allocatable: &protos.Capacity{
+						Resources: map[string]string{
+							"cpu":    "10000",
+							"memory": "8192000",
+						},
+					},
+					Pods: &podlist,
+				},
+			},
+			{
+				Metadata: &protos.Metadata{
+					Name:      "kubelet-4",
+					Namespace: "default",
+					Uid:       "kubelet-4",
+				},
+				Spec: &protos.NodeSpec{
+					Unschedulable: &protos.Unschedulable{
+						Condition: false,
+					},
+				},
+				Status: &protos.NodeStatus{
+					Condition: &protos.Condition{
+						LastUpdate: &timestamp.Timestamp{Seconds: 1705062732},
+					},
+					Capacity: &protos.Capacity{
+						Resources: map[string]string{
+							"cpu":    "10000",
+							"memory": "8192000",
+						},
+					},
+					Allocatable: &protos.Capacity{
+						Resources: map[string]string{
+							"cpu":    "10000",
+							"memory": "8192000",
+						},
+					},
+					Pods: &podlist,
+				},
+			},
+		}
+
+		for _, node := range nodes {
+			ku := fmt.Sprintf("/cluster/resources/node/%s", node.Metadata.Name)
+			err = etcdMiddleware.WriteToEtcdFromPb(cli, context.Background(), ku, &node)
+			if err != nil {
+				fmt.Printf("fail. %s", err.Error())
+				return
+			}
+			fmt.Printf("node soccess ")
+		}
+	}
 }
