@@ -130,7 +130,7 @@ spec:
       annotations:
         autoscaling.knative.dev/minScale: "0"        
         autoscaling.knative.dev/maxScale: "10"      
-        autoscaling.knative.dev/target: "200"        
+        autoscaling.knative.dev/target: "20"        
     spec:
       containers:
         - image: mascorpion/ds:latest

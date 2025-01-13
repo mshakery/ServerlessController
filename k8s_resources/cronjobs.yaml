@@ -20,7 +20,6 @@ spec:
                   for i in $(seq 1 3); do
                     start_time=$(date +%s)
                     ./metricCollectorCronjob/metricCollectorCronjob
-                    sleep 2 # Simulate the task running for 2 seconds
                     end_time=$(date +%s)
                     elapsed_time=$((end_time - start_time))
                     sleep_duration=$((20 - elapsed_time))
