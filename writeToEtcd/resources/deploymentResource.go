@@ -37,7 +37,8 @@ func (dr *DeploymentResource) CreatePostHook(ctx context.Context) bool {
 		newPod.Metadata.Name = podName
 		newPod.Metadata.Uid = podName
 		newPod.Spec = dr.Deployment.GetSpec().GetTemplate().GetSpec()
-		newPod.Status.Worker.Worker = "-1"
+		newPod.Status = &protos.PodStatus{}
+		newPod.Status.Worker = &protos.Worker{Worker: "-1"}
 		newPod.Status.ResourceUsage = &protos.ResourceUsage{ResourceUsage: make(map[string]string)}
 		pods = append(pods, newPod)
 	}
