@@ -12,10 +12,8 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 	"log"
-	"math"
 	"net"
 	"strconv"
-	"time"
 )
 
 var (
@@ -54,7 +52,7 @@ func (s *server) Scale(ctx context.Context, in *protos.HpaName) (*protos.Empty, 
 	if err2 != nil {
 		log.Fatalf("scheduler node: could not connect: %v", err2)
 	}
-	c := protos.NewSchedulerClient(conn)
+	_ = protos.NewSchedulerClient(conn) // todo <-- why is this not used?
 
 	client, err := etcd.ConnectToEtcd()
 	if err != nil {
@@ -62,10 +60,16 @@ func (s *server) Scale(ctx context.Context, in *protos.HpaName) (*protos.Empty, 
 	}
 	var hpa *protos.Hpa
 	key := fmt.Sprintf("/cluster/resources/hpa/%s/%s", in.GetNamespace(), in.GetName())
-	etcd.ReadOneFromEtcdToPb(client, ctx, key, hpa)
+	err = etcd.ReadOneFromEtcdToPb(client, ctx, key, hpa)
+	if err != nil {
+		return nil, err
+	}
 	deploymentKey := fmt.Sprintf("/cluster/resources/Deployment/%s/%s/status", in.GetNamespace(), hpa.GetSpec().GetTargetResource())
 	var deployment *protos.DeploymentStatus
-	etcd.ReadOneFromEtcdToPb(client, ctx, deploymentKey, deployment)
+	err = etcd.ReadOneFromEtcdToPb(client, ctx, deploymentKey, deployment)
+	if err != nil {
+		return nil, err
+	}
 	resourceAverage := CalculateAverageResourceUsage(client, ctx, in.GetNamespace(), deployment.PodNames, hpa.GetSpec().GetMetrics().GetMetricType())
 	targetValue := resourceAverage / hpa.GetSpec().GetMetrics().GetTargetValue()
 	if Abs(targetValue/hpa.GetSpec().GetMetrics().GetTargetAverageUtilization()) <= 0.9 || Abs(targetValue/hpa.GetSpec().GetMetrics().GetTargetAverageUtilization()) > 1.1 {
@@ -73,19 +77,25 @@ func (s *server) Scale(ctx context.Context, in *protos.HpaName) (*protos.Empty, 
 		currentReplica := deployment.Replicas
 		currrentPods := deployment.PodNames
 		if newReplica > deployment.Replicas {
-			for _ = range newReplica - deployment.Replicas {
+			for i := int32(0); i < newReplica-deployment.Replicas; i++ {
 				currentReplica += 1
 				newUuid := uuid.New().String()
 				newPodName := fmt.Sprintf("%s-%s", hpa.GetSpec().GetTargetResource(), newUuid)
 				currrentPods = append(currrentPods, newPodName)
-				etcd.WriteToEtcdFromPb(client, ctx, deploymentKey, &protos.DeploymentStatus{Replicas: currentReplica, PodNames: currrentPods})
+				err := etcd.WriteToEtcdFromPb(client, ctx, deploymentKey, &protos.DeploymentStatus{Replicas: currentReplica, PodNames: currrentPods})
+				if err != nil {
+					return nil, err
+				}
 			}
 		} else {
-			for _ = range deployment.Replicas - newReplica {
-				removedPod := currrentPods[len(currrentPods)-1]
+			for i := int32(0); i < deployment.Replicas-newReplica; i++ {
+				_ = currrentPods[len(currrentPods)-1]
 				currentReplica -= 1
 				currrentPods = currrentPods[:len(currrentPods)-1]
-				etcd.WriteToEtcdFromPb(client, ctx, deploymentKey, &protos.DeploymentStatus{Replicas: currentReplica, PodNames: currrentPods})
+				err := etcd.WriteToEtcdFromPb(client, ctx, deploymentKey, &protos.DeploymentStatus{Replicas: currentReplica, PodNames: currrentPods})
+				if err != nil {
+					return nil, err
+				}
 			}
 		}
 
