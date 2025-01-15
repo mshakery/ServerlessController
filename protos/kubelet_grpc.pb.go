@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Kubelet_Metric_FullMethodName  = "/kubernetes.Kubelet/Metric"
-	Kubelet_RunAPod_FullMethodName = "/kubernetes.Kubelet/RunAPod"
+	Kubelet_Metric_FullMethodName     = "/kubernetes.Kubelet/Metric"
+	Kubelet_RunAPod_FullMethodName    = "/kubernetes.Kubelet/RunAPod"
+	Kubelet_DeleteAPod_FullMethodName = "/kubernetes.Kubelet/DeleteAPod"
 )
 
 // KubeletClient is the client API for Kubelet service.
@@ -29,6 +30,7 @@ const (
 type KubeletClient interface {
 	Metric(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*NodeMetrics, error)
 	RunAPod(ctx context.Context, in *Pod, opts ...grpc.CallOption) (*Empty, error)
+	DeleteAPod(ctx context.Context, in *Pod, opts ...grpc.CallOption) (*Empty, error)
 }
 
 type kubeletClient struct {
@@ -59,12 +61,23 @@ func (c *kubeletClient) RunAPod(ctx context.Context, in *Pod, opts ...grpc.CallO
 	return out, nil
 }
 
+func (c *kubeletClient) DeleteAPod(ctx context.Context, in *Pod, opts ...grpc.CallOption) (*Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Empty)
+	err := c.cc.Invoke(ctx, Kubelet_DeleteAPod_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // KubeletServer is the server API for Kubelet service.
 // All implementations must embed UnimplementedKubeletServer
 // for forward compatibility.
 type KubeletServer interface {
 	Metric(context.Context, *Empty) (*NodeMetrics, error)
 	RunAPod(context.Context, *Pod) (*Empty, error)
+	DeleteAPod(context.Context, *Pod) (*Empty, error)
 	mustEmbedUnimplementedKubeletServer()
 }
 
@@ -80,6 +93,9 @@ func (UnimplementedKubeletServer) Metric(context.Context, *Empty) (*NodeMetrics,
 }
 func (UnimplementedKubeletServer) RunAPod(context.Context, *Pod) (*Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RunAPod not implemented")
+}
+func (UnimplementedKubeletServer) DeleteAPod(context.Context, *Pod) (*Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAPod not implemented")
 }
 func (UnimplementedKubeletServer) mustEmbedUnimplementedKubeletServer() {}
 func (UnimplementedKubeletServer) testEmbeddedByValue()                 {}
@@ -138,6 +154,24 @@ func _Kubelet_RunAPod_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Kubelet_DeleteAPod_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Pod)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KubeletServer).DeleteAPod(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Kubelet_DeleteAPod_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KubeletServer).DeleteAPod(ctx, req.(*Pod))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Kubelet_ServiceDesc is the grpc.ServiceDesc for Kubelet service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +186,10 @@ var Kubelet_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RunAPod",
 			Handler:    _Kubelet_RunAPod_Handler,
+		},
+		{
+			MethodName: "DeleteAPod",
+			Handler:    _Kubelet_DeleteAPod_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

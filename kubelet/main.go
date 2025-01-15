@@ -30,6 +30,20 @@ func (s *server) RunAPod(ctx context.Context, pod *protos.Pod) (*protos.Empty, e
 	return &protos.Empty{}, nil
 }
 
+func (s *server) DeleteAPod(ctx context.Context, in *protos.Pod) (*protos.Empty, error) {
+	// command
+	idx := -1
+	for i, pod := range podsToRun {
+		if pod.GetMetadata().GetNamespace() == in.GetMetadata().GetNamespace() && pod.GetMetadata().GetName() == in.GetMetadata().GetName() {
+			idx = i
+		}
+	}
+	if idx == -1 {
+		podsToRun = append(podsToRun[:idx], podsToRun[idx+1:]...)
+	}
+	return &protos.Empty{}, nil
+}
+
 func (s *server) Metric(ctx context.Context, in *protos.Empty) (*protos.NodeMetrics, error) {
 	startTime := time.Now().UnixNano()
 	metrics := protos.NodeMetrics{}

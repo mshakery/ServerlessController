@@ -21,4 +21,5 @@ message NodeMetrics {
 service Kubelet {
   rpc Metric(Empty) returns (NodeMetrics) {}
   rpc RunAPod(Pod) returns (Empty) {}
+  rpc DeleteAPod(Pod) returns (Empty) {}
 }
