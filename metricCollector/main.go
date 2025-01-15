@@ -24,6 +24,7 @@ type server struct {
 }
 
 func (s *server) GatherMetric(ctx context.Context, in *protos.NodeName) (*protos.Empty, error) {
+	startTime := time.Now().UnixNano()
 	host := fmt.Sprintf("%s:50051", in.GetName())
 
 	conn, err2 := grpc.NewClient(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -63,14 +64,24 @@ func (s *server) GatherMetric(ctx context.Context, in *protos.NodeName) (*protos
 	NodeAllocatableKey := fmt.Sprintf("/cluster/resources/node/%s/allocatable", in.GetName())
 	NodeLastUpdateKey := fmt.Sprintf("/cluster/resources/node/%s/update/time", in.GetName())
 	var nodeObject = protos.Node{}
-	etcd.ReadOneFromEtcdToPb(client, ctx, nodeKey, &nodeObject)
+	err = etcd.ReadOneFromEtcdToPb(client, ctx, nodeKey, &nodeObject)
+	if err != nil {
+		return nil, err
+	}
 	nodeFreeResource := nodeObject.GetStatus().GetCapacity()
 	nodeCpuCapacity, _ := strconv.Atoi(nodeFreeResource.Resources["cpu"])
 	nodeMemoryCapacity, _ := strconv.Atoi(nodeFreeResource.Resources["memory"])
 	nodeFreeResource.Resources["cpu"] = strconv.Itoa(nodeCpuCapacity - nodeCpuUsage)
 	nodeFreeResource.Resources["memory"] = strconv.Itoa(nodeMemoryCapacity - nodeMemoryUsage)
-	etcd.WriteToEtcdFromPb(client, ctx, NodeAllocatableKey, nodeFreeResource)
-	etcd.WriteToEtcd(client, ctx, NodeLastUpdateKey, time.Now().Format("2006-01-02 15:04:05"))
+	err = etcd.WriteToEtcdFromPb(client, ctx, NodeAllocatableKey, nodeFreeResource)
+	if err != nil {
+		return nil, err
+	}
+	err = etcd.WriteToEtcd(client, ctx, NodeLastUpdateKey, time.Now().Format("2006-01-02 15:04:05"))
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("Time took to run function:", time.Now().UnixNano()-startTime)
 	return &protos.Empty{}, nil
 }
 

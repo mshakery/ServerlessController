@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc"
 	"log"
 	"net"
+	"time"
 )
 
 var (
@@ -40,6 +41,7 @@ func ResourceFactory(req *protos.ClientRequest) resources.Resource {
 }
 
 func (s *server) Apply(ctx context.Context, in *protos.ApplyRequest) (*protos.Response, error) {
+	startTime := time.Now().UnixNano()
 	resource := ResourceFactory(in.GetClientRequest())
 	result := resources.CreateResourceInEtcd(ctx, resource)
 	resp := protos.Response{Code: 0, Status: "Success"}
@@ -47,6 +49,7 @@ func (s *server) Apply(ctx context.Context, in *protos.ApplyRequest) (*protos.Re
 		resp.Code = -1
 		resp.Status = "Cannot Write to ETCD"
 	}
+	fmt.Println("Time took to run function:", time.Now().UnixNano()-startTime)
 	return &resp, nil
 }
 

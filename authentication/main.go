@@ -12,6 +12,7 @@ import (
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
+	"time"
 )
 
 var (
@@ -23,6 +24,7 @@ type server struct {
 }
 
 func (s *server) Auth(ctx context.Context, in *protos.AuthenticationRequest) (*protos.Response, error) {
+	startTime := time.Now().UnixNano()
 	/*
 		should reade from ETCD. key is token. checks if value exists.
 		if exists, value is uid.
@@ -49,7 +51,7 @@ func (s *server) Auth(ctx context.Context, in *protos.AuthenticationRequest) (*p
 		resp.Status = "Token does not exist."
 		return &resp, nil
 	} else {
-		for _, kv := range read.Kvs { /* todo test */
+		for _, kv := range read.Kvs {
 			fmt.Printf("k: %s, v: %s\n", kv.Key, kv.Value)
 			resp.Code = 0
 			resp.Status = "User exists."
@@ -60,10 +62,10 @@ func (s *server) Auth(ctx context.Context, in *protos.AuthenticationRequest) (*p
 				return nil, err
 			}
 
-			/* todo is this how we want to call authorization? */
+			fmt.Println("Time took to run function:", time.Now().UnixNano()-startTime)
 			authResp, err := callAuthorization(ctx, in.ClientRequest, user.Uid)
 			if err != nil {
-				/* todo */
+				return nil, err
 			}
 			return authResp, nil
 		}

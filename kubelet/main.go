@@ -10,6 +10,7 @@ import (
 	"log"
 	"net"
 	"strconv"
+	"time"
 )
 
 var (
@@ -30,6 +31,7 @@ func (s *server) RunAPod(ctx context.Context, pod *protos.Pod) (*protos.Empty, e
 }
 
 func (s *server) Metric(ctx context.Context, in *protos.Empty) (*protos.NodeMetrics, error) {
+	startTime := time.Now().UnixNano()
 	metrics := protos.NodeMetrics{}
 	var result []*protos.PodMetrics
 	for _, pod := range podsToRun {
@@ -49,6 +51,7 @@ func (s *server) Metric(ctx context.Context, in *protos.Empty) (*protos.NodeMetr
 		result = append(result, &pm)
 	}
 	metrics.PodMetrics = result
+	fmt.Println("Time took to run function:", time.Now().UnixNano()-startTime)
 	return &metrics, nil
 }
 

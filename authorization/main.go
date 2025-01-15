@@ -12,6 +12,7 @@ import (
 	"log"
 	"net"
 	"slices"
+	"time"
 
 	"google.golang.org/grpc"
 )
@@ -25,6 +26,7 @@ type server struct {
 }
 
 func (s *server) Authorize(ctx context.Context, in *protos.AuthorizationRequest) (*protos.Response, error) {
+	startTime := time.Now().UnixNano()
 	/*
 		should check if user has permission to perform action.
 	*/
@@ -49,14 +51,14 @@ func (s *server) Authorize(ctx context.Context, in *protos.AuthorizationRequest)
 		resp.Status = "No role bindings found.."
 		return &resp, nil
 	} else {
-		for _, kv := range read.Kvs { /* todo test */
+		for _, kv := range read.Kvs {
 			fmt.Printf("itering over: key: %s, val: %s\n", kv.Key, kv.Value)
 			roleReference := protos.RoleBinding{}
 			err := proto.Unmarshal(kv.Value, &roleReference)
 			if err != nil {
 				return nil, err
 			}
-			if slices.Contains(roleReference.Subjects, in.Uid) { /* todo refactor add to slice and then read all and check in struct */
+			if slices.Contains(roleReference.Subjects, in.Uid) {
 				role := protos.Role{}
 				whatToRead := fmt.Sprintf("/cluster/resources/role/%s", roleReference.RoleRef)
 				err := etcd.ReadOneFromEtcdToPb(client, ctx, whatToRead, &role)
@@ -69,7 +71,6 @@ func (s *server) Authorize(ctx context.Context, in *protos.AuthorizationRequest)
 						break
 					}
 				}
-				// userRoles = append(userRoles, &role)
 				if hasPermission {
 					break
 				}
@@ -77,8 +78,8 @@ func (s *server) Authorize(ctx context.Context, in *protos.AuthorizationRequest)
 		}
 	}
 
+	fmt.Println("Time took to run function:", time.Now().UnixNano()-startTime)
 	if hasPermission {
-		/* todo the rest */
 		write2Etcd, err := callWrite2Etcd(ctx, in.ClientRequest, in.Uid)
 		if err != nil {
 			return nil, err
