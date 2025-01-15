@@ -14,6 +14,7 @@ import (
 	"log"
 	"net"
 	"strconv"
+	"sync"
 )
 
 var (
@@ -95,6 +96,8 @@ func (s *server) Scale(ctx context.Context, in *protos.HpaName) (*protos.Empty, 
 		}
 		currentReplica := deploymentStatus.Replicas
 		currrentPods := deploymentStatus.PodNames
+
+		wg := new(sync.WaitGroup)
 		if newReplica > deploymentStatus.Replicas {
 			for i := int32(0); i < newReplica-deploymentStatus.Replicas; i++ {
 				currentReplica += 1
@@ -117,7 +120,11 @@ func (s *server) Scale(ctx context.Context, in *protos.HpaName) (*protos.Empty, 
 					ClientRequest: &protos.ClientRequest{Operation: "create", OneofResource: &protos.ClientRequest_Pod{Pod: &newPod}},
 				}
 				etcd.WriteToEtcdFromPb(client, ctx, deploymentStatusKey, &protos.DeploymentStatus{Replicas: currentReplica, PodNames: currrentPods})
-				clientWriteToEtcd.Apply(ctx, applyReq) //TODO: parallelize
+				wg.Add(1)
+				go func(ctx context.Context, applyReq *protos.ApplyRequest) {
+					defer wg.Done()
+					clientWriteToEtcd.Apply(ctx, applyReq)
+				}(ctx, applyReq)
 			}
 		} else if newReplica < deploymentStatus.Replicas {
 			for i := int32(0); i < deploymentStatus.Replicas-newReplica; i++ {
@@ -128,30 +135,33 @@ func (s *server) Scale(ctx context.Context, in *protos.HpaName) (*protos.Empty, 
 				if err != nil {
 					return nil, err
 				}
-				// TODO: parallelize from here
-				podWorkerKey := fmt.Sprintf("/cluster/resources/pod/%s/%s/worker", in.GetNamespace(), removedPod)
-				var podWorker *protos.Worker
-				err = etcd.ReadOneFromEtcdToPb(client, ctx, podWorkerKey, podWorker)
-				if err != nil {
-					return nil, err
-				}
-				workerKey := fmt.Sprintf("%s:50051", podWorker.GetWorker())
-				conn, err := grpc.NewClient(workerKey, grpc.WithTransportCredentials(insecure.NewCredentials()))
-				if err != nil {
-					log.Fatalf("could not connect: %v", err)
-				}
-				defer conn.Close()
-				clientKubelet := protos.NewKubeletClient(conn)
-				clientKubelet.DeleteAPod(ctx, &protos.Pod{Metadata: &protos.Metadata{Name: removedPod, Namespace: in.GetNamespace()}})
-				podKey := fmt.Sprintf("/cluster/resources/pod/%s/%s", in.GetNamespace(), removedPod)
-				_, err = client.Delete(ctx, podKey, clientv3.WithPrefix())
-				if err != nil {
-					log.Fatalf("Failed to delete keys with prefix %s: %v", podKey, err)
-				}
-				// TODO: parallelize until here
+
+				wg.Add(1)
+				go func() {
+					defer wg.Done()
+					podWorkerKey := fmt.Sprintf("/cluster/resources/pod/%s/%s/worker", in.GetNamespace(), removedPod)
+					var podWorker *protos.Worker
+					err = etcd.ReadOneFromEtcdToPb(client, ctx, podWorkerKey, podWorker)
+					if err != nil {
+						log.Fatalf("cant read from etcd: %v", err)
+					}
+					workerKey := fmt.Sprintf("%s:50051", podWorker.GetWorker())
+					conn, err := grpc.NewClient(workerKey, grpc.WithTransportCredentials(insecure.NewCredentials()))
+					if err != nil {
+						log.Fatalf("could not connect: %v", err)
+					}
+					defer conn.Close()
+					clientKubelet := protos.NewKubeletClient(conn)
+					clientKubelet.DeleteAPod(ctx, &protos.Pod{Metadata: &protos.Metadata{Name: removedPod, Namespace: in.GetNamespace()}})
+					podKey := fmt.Sprintf("/cluster/resources/pod/%s/%s", in.GetNamespace(), removedPod)
+					_, err = client.Delete(ctx, podKey, clientv3.WithPrefix())
+					if err != nil {
+						log.Fatalf("Failed to delete keys with prefix %s: %v", podKey, err)
+					}
+				}()
 			}
 		}
-
+		wg.Wait()
 	}
 	return &protos.Empty{}, nil
 }

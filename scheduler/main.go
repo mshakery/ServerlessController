@@ -33,6 +33,7 @@ type NodeDetail struct {
 }
 
 func getNodesWithSufficientResource(ctx context.Context, cli *clientv3.Client, cpuMin int, memoryMin int) []NodeDetail {
+	startTime := time.Now().UnixNano()
 	var result []NodeDetail
 	response, _ := etcd.ReadFromEtcd(cli, ctx, "/cluster/resources/node/", true)
 	for _, kv := range response.Kvs {
@@ -57,6 +58,7 @@ func getNodesWithSufficientResource(ctx context.Context, cli *clientv3.Client, c
 	sort.Slice(result, func(i, j int) bool {
 		return result[i].freeMemory > result[j].freeMemory
 	})
+	fmt.Println("Time took to schedule a pod in ns:", time.Now().UnixNano()-startTime)
 	return result
 }
 
