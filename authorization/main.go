@@ -52,7 +52,7 @@ func (s *server) Authorize(ctx context.Context, in *protos.AuthorizationRequest)
 		return &resp, nil
 	} else {
 		for _, kv := range read.Kvs {
-			fmt.Printf("itering over: key: %s, val: %s\n", kv.Key, kv.Value)
+			// fmt.Printf("itering over: key: %s, val: %s\n", kv.Key, kv.Value)
 			roleReference := protos.RoleBinding{}
 			err := proto.Unmarshal(kv.Value, &roleReference)
 			if err != nil {

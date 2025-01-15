@@ -52,7 +52,7 @@ func (s *server) Auth(ctx context.Context, in *protos.AuthenticationRequest) (*p
 		return &resp, nil
 	} else {
 		for _, kv := range read.Kvs {
-			fmt.Printf("k: %s, v: %s\n", kv.Key, kv.Value)
+			// fmt.Printf("k: %s, v: %s\n", kv.Key, kv.Value)
 			resp.Code = 0
 			resp.Status = "User exists."
 
