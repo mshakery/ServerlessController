@@ -9,6 +9,7 @@ import (
 	protos "github.com/mshakery/ServerlessController/protos"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
@@ -41,10 +42,19 @@ func ReallocatePods(ctx context.Context, client *clientv3.Client, nodeName strin
 				etcd.ReadOneFromEtcdToPb(client, ctx, podKey, &podProto)
 				if podProto.Spec.RestartPolicy != "Never" {
 					etcd.WriteToEtcdFromPb(client, ctx, string(kv.Key), &protos.Worker{Worker: "-1"})
+					conn, err2 := grpc.NewClient("scheduler.default.10.101.174.165.sslip.io:80", grpc.WithTransportCredentials(insecure.NewCredentials()))
+					if err2 != nil {
+						log.Fatalf("scheduler node: could not connect: %v", err2)
+					}
+					c := protos.NewSchedulerClient(conn)
+					in := protos.PodDetail{Name: podProto.GetMetadata().GetName(), Namespace: podProto.GetMetadata().GetNamespace()}
+					_, err := c.Schedule(ctx, &in)
+					if err != nil {
+						log.Fatalf("schedule error: %v", err)
+					}
 				}
 			}
 		}
-
 	}
 }
 

@@ -33,6 +33,8 @@ func ResourceFactory(req *protos.ClientRequest) resources.Resource {
 		return &resources.NodeResource{Node: *req.GetNode()}
 	case *protos.ClientRequest_Pod:
 		return &resources.PodResource{Pod: *req.GetPod()}
+	case *protos.ClientRequest_Hpa:
+		return &resources.HpaResource{Hpa: *req.GetHpa()}
 	}
 	return nil
 }

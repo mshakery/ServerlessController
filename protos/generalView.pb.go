@@ -1142,6 +1142,7 @@ func (x *Deployment) GetStatus() *DeploymentStatus {
 	return nil
 }
 
+// node
 type Unschedulable struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1563,6 +1564,7 @@ type ClientRequest struct {
 	//	*ClientRequest_User
 	//	*ClientRequest_Node
 	//	*ClientRequest_Pod
+	//	*ClientRequest_Hpa
 	OneofResource isClientRequest_OneofResource `protobuf_oneof:"oneof_resource"`
 	Timestamp     *timestamp.Timestamp          `protobuf:"bytes,8,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 }
@@ -1653,6 +1655,13 @@ func (x *ClientRequest) GetPod() *Pod {
 	return nil
 }
 
+func (x *ClientRequest) GetHpa() *Hpa {
+	if x, ok := x.GetOneofResource().(*ClientRequest_Hpa); ok {
+		return x.Hpa
+	}
+	return nil
+}
+
 func (x *ClientRequest) GetTimestamp() *timestamp.Timestamp {
 	if x != nil {
 		return x.Timestamp
@@ -1688,6 +1697,10 @@ type ClientRequest_Pod struct {
 	Pod *Pod `protobuf:"bytes,7,opt,name=pod,proto3,oneof"`
 }
 
+type ClientRequest_Hpa struct {
+	Hpa *Hpa `protobuf:"bytes,9,opt,name=hpa,proto3,oneof"`
+}
+
 func (*ClientRequest_Deployment) isClientRequest_OneofResource() {}
 
 func (*ClientRequest_Role) isClientRequest_OneofResource() {}
@@ -1699,6 +1712,8 @@ func (*ClientRequest_User) isClientRequest_OneofResource() {}
 func (*ClientRequest_Node) isClientRequest_OneofResource() {}
 
 func (*ClientRequest_Pod) isClientRequest_OneofResource() {}
+
+func (*ClientRequest_Hpa) isClientRequest_OneofResource() {}
 
 type Response struct {
 	state         protoimpl.MessageState
@@ -1787,6 +1802,190 @@ func (x *Empty) ProtoReflect() protoreflect.Message {
 // Deprecated: Use Empty.ProtoReflect.Descriptor instead.
 func (*Empty) Descriptor() ([]byte, []int) {
 	return file_generalView_proto_rawDescGZIP(), []int{27}
+}
+
+type HPASpec struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	MinReplicas    int32       `protobuf:"varint,1,opt,name=minReplicas,proto3" json:"minReplicas,omitempty"`      // Minimum number of replicas
+	MaxReplicas    int32       `protobuf:"varint,2,opt,name=maxReplicas,proto3" json:"maxReplicas,omitempty"`      // Maximum number of replicas
+	TargetResource string      `protobuf:"bytes,3,opt,name=targetResource,proto3" json:"targetResource,omitempty"` // Target resource to scale (e.g., Deployment name)
+	Metrics        *MetricSpec `protobuf:"bytes,4,opt,name=metrics,proto3" json:"metrics,omitempty"`               // Metrics for autoscaling
+}
+
+func (x *HPASpec) Reset() {
+	*x = HPASpec{}
+	mi := &file_generalView_proto_msgTypes[28]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HPASpec) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HPASpec) ProtoMessage() {}
+
+func (x *HPASpec) ProtoReflect() protoreflect.Message {
+	mi := &file_generalView_proto_msgTypes[28]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HPASpec.ProtoReflect.Descriptor instead.
+func (*HPASpec) Descriptor() ([]byte, []int) {
+	return file_generalView_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *HPASpec) GetMinReplicas() int32 {
+	if x != nil {
+		return x.MinReplicas
+	}
+	return 0
+}
+
+func (x *HPASpec) GetMaxReplicas() int32 {
+	if x != nil {
+		return x.MaxReplicas
+	}
+	return 0
+}
+
+func (x *HPASpec) GetTargetResource() string {
+	if x != nil {
+		return x.TargetResource
+	}
+	return ""
+}
+
+func (x *HPASpec) GetMetrics() *MetricSpec {
+	if x != nil {
+		return x.Metrics
+	}
+	return nil
+}
+
+// Metric specification for HPA
+type MetricSpec struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	TargetValue              float32 `protobuf:"fixed32,1,opt,name=targetValue,proto3" json:"targetValue,omitempty"` // Target value for the resource metric
+	TargetAverageUtilization float32 `protobuf:"fixed32,2,opt,name=targetAverageUtilization,proto3" json:"targetAverageUtilization,omitempty"`
+	MetricType               string  `protobuf:"bytes,3,opt,name=MetricType,proto3" json:"MetricType,omitempty"`
+}
+
+func (x *MetricSpec) Reset() {
+	*x = MetricSpec{}
+	mi := &file_generalView_proto_msgTypes[29]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MetricSpec) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MetricSpec) ProtoMessage() {}
+
+func (x *MetricSpec) ProtoReflect() protoreflect.Message {
+	mi := &file_generalView_proto_msgTypes[29]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MetricSpec.ProtoReflect.Descriptor instead.
+func (*MetricSpec) Descriptor() ([]byte, []int) {
+	return file_generalView_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *MetricSpec) GetTargetValue() float32 {
+	if x != nil {
+		return x.TargetValue
+	}
+	return 0
+}
+
+func (x *MetricSpec) GetTargetAverageUtilization() float32 {
+	if x != nil {
+		return x.TargetAverageUtilization
+	}
+	return 0
+}
+
+func (x *MetricSpec) GetMetricType() string {
+	if x != nil {
+		return x.MetricType
+	}
+	return ""
+}
+
+type Hpa struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Metadata *Metadata `protobuf:"bytes,1,opt,name=metadata,proto3" json:"metadata,omitempty"` // Metadata for the HPA
+	Spec     *HPASpec  `protobuf:"bytes,2,opt,name=spec,proto3" json:"spec,omitempty"`         // Specification of the HPA
+}
+
+func (x *Hpa) Reset() {
+	*x = Hpa{}
+	mi := &file_generalView_proto_msgTypes[30]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Hpa) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Hpa) ProtoMessage() {}
+
+func (x *Hpa) ProtoReflect() protoreflect.Message {
+	mi := &file_generalView_proto_msgTypes[30]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Hpa.ProtoReflect.Descriptor instead.
+func (*Hpa) Descriptor() ([]byte, []int) {
+	return file_generalView_proto_rawDescGZIP(), []int{30}
+}
+
+func (x *Hpa) GetMetadata() *Metadata {
+	if x != nil {
+		return x.Metadata
+	}
+	return nil
+}
+
+func (x *Hpa) GetSpec() *HPASpec {
+	if x != nil {
+		return x.Spec
+	}
+	return nil
 }
 
 var File_generalView_proto protoreflect.FileDescriptor
@@ -2037,7 +2236,7 @@ var file_generalView_proto_rawDesc = []byte{
 	0x6f, 0x64, 0x65, 0x53, 0x70, 0x65, 0x63, 0x52, 0x04, 0x73, 0x70, 0x65, 0x63, 0x12, 0x2e, 0x0a,
 	0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x16, 0x2e,
 	0x6b, 0x75, 0x62, 0x65, 0x72, 0x6e, 0x65, 0x74, 0x65, 0x73, 0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x53,
-	0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x22, 0x8e, 0x03,
+	0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x22, 0xb3, 0x03,
 	0x0a, 0x0d, 0x43, 0x6c, 0x69, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
 	0x1c, 0x0a, 0x09, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01,
 	0x28, 0x09, 0x52, 0x09, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x38, 0x0a,
@@ -2058,17 +2257,45 @@ var file_generalView_proto_rawDesc = []byte{
 	0x2e, 0x4e, 0x6f, 0x64, 0x65, 0x48, 0x00, 0x52, 0x04, 0x6e, 0x6f, 0x64, 0x65, 0x12, 0x23, 0x0a,
 	0x03, 0x70, 0x6f, 0x64, 0x18, 0x07, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x6b, 0x75, 0x62,
 	0x65, 0x72, 0x6e, 0x65, 0x74, 0x65, 0x73, 0x2e, 0x50, 0x6f, 0x64, 0x48, 0x00, 0x52, 0x03, 0x70,
-	0x6f, 0x64, 0x12, 0x38, 0x0a, 0x09, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x18,
-	0x08, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d,
-	0x70, 0x52, 0x09, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x42, 0x10, 0x0a, 0x0e,
-	0x6f, 0x6e, 0x65, 0x6f, 0x66, 0x5f, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x22, 0x36,
-	0x0a, 0x08, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x63, 0x6f,
-	0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x12, 0x16,
-	0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06,
-	0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x22, 0x07, 0x0a, 0x05, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x42,
-	0x0f, 0x5a, 0x0d, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x73, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x73,
-	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6f, 0x64, 0x12, 0x23, 0x0a, 0x03, 0x68, 0x70, 0x61, 0x18, 0x09, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x0f, 0x2e, 0x6b, 0x75, 0x62, 0x65, 0x72, 0x6e, 0x65, 0x74, 0x65, 0x73, 0x2e, 0x48, 0x70, 0x61,
+	0x48, 0x00, 0x52, 0x03, 0x68, 0x70, 0x61, 0x12, 0x38, 0x0a, 0x09, 0x74, 0x69, 0x6d, 0x65, 0x73,
+	0x74, 0x61, 0x6d, 0x70, 0x18, 0x08, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f,
+	0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d,
+	0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x09, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d,
+	0x70, 0x42, 0x10, 0x0a, 0x0e, 0x6f, 0x6e, 0x65, 0x6f, 0x66, 0x5f, 0x72, 0x65, 0x73, 0x6f, 0x75,
+	0x72, 0x63, 0x65, 0x22, 0x36, 0x0a, 0x08, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x12, 0x0a, 0x04, 0x63, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x63,
+	0x6f, 0x64, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x02, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x22, 0x07, 0x0a, 0x05, 0x45,
+	0x6d, 0x70, 0x74, 0x79, 0x22, 0xa7, 0x01, 0x0a, 0x07, 0x48, 0x50, 0x41, 0x53, 0x70, 0x65, 0x63,
+	0x12, 0x20, 0x0a, 0x0b, 0x6d, 0x69, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x69, 0x63, 0x61, 0x73, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0b, 0x6d, 0x69, 0x6e, 0x52, 0x65, 0x70, 0x6c, 0x69, 0x63,
+	0x61, 0x73, 0x12, 0x20, 0x0a, 0x0b, 0x6d, 0x61, 0x78, 0x52, 0x65, 0x70, 0x6c, 0x69, 0x63, 0x61,
+	0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0b, 0x6d, 0x61, 0x78, 0x52, 0x65, 0x70, 0x6c,
+	0x69, 0x63, 0x61, 0x73, 0x12, 0x26, 0x0a, 0x0e, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x52, 0x65,
+	0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x74, 0x61,
+	0x72, 0x67, 0x65, 0x74, 0x52, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x12, 0x30, 0x0a, 0x07,
+	0x6d, 0x65, 0x74, 0x72, 0x69, 0x63, 0x73, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x16, 0x2e,
+	0x6b, 0x75, 0x62, 0x65, 0x72, 0x6e, 0x65, 0x74, 0x65, 0x73, 0x2e, 0x4d, 0x65, 0x74, 0x72, 0x69,
+	0x63, 0x53, 0x70, 0x65, 0x63, 0x52, 0x07, 0x6d, 0x65, 0x74, 0x72, 0x69, 0x63, 0x73, 0x22, 0x8a,
+	0x01, 0x0a, 0x0a, 0x4d, 0x65, 0x74, 0x72, 0x69, 0x63, 0x53, 0x70, 0x65, 0x63, 0x12, 0x20, 0x0a,
+	0x0b, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x02, 0x52, 0x0b, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x12,
+	0x3a, 0x0a, 0x18, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x41, 0x76, 0x65, 0x72, 0x61, 0x67, 0x65,
+	0x55, 0x74, 0x69, 0x6c, 0x69, 0x7a, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x02, 0x52, 0x18, 0x74, 0x61, 0x72, 0x67, 0x65, 0x74, 0x41, 0x76, 0x65, 0x72, 0x61, 0x67, 0x65,
+	0x55, 0x74, 0x69, 0x6c, 0x69, 0x7a, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x1e, 0x0a, 0x0a, 0x4d,
+	0x65, 0x74, 0x72, 0x69, 0x63, 0x54, 0x79, 0x70, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x0a, 0x4d, 0x65, 0x74, 0x72, 0x69, 0x63, 0x54, 0x79, 0x70, 0x65, 0x22, 0x60, 0x0a, 0x03, 0x48,
+	0x70, 0x61, 0x12, 0x30, 0x0a, 0x08, 0x6d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x6b, 0x75, 0x62, 0x65, 0x72, 0x6e, 0x65, 0x74, 0x65,
+	0x73, 0x2e, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x52, 0x08, 0x6d, 0x65, 0x74, 0x61,
+	0x64, 0x61, 0x74, 0x61, 0x12, 0x27, 0x0a, 0x04, 0x73, 0x70, 0x65, 0x63, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x13, 0x2e, 0x6b, 0x75, 0x62, 0x65, 0x72, 0x6e, 0x65, 0x74, 0x65, 0x73, 0x2e,
+	0x48, 0x50, 0x41, 0x53, 0x70, 0x65, 0x63, 0x52, 0x04, 0x73, 0x70, 0x65, 0x63, 0x42, 0x0f, 0x5a,
+	0x0d, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x73, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x73, 0x62, 0x06,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -2083,7 +2310,7 @@ func file_generalView_proto_rawDescGZIP() []byte {
 	return file_generalView_proto_rawDescData
 }
 
-var file_generalView_proto_msgTypes = make([]protoimpl.MessageInfo, 36)
+var file_generalView_proto_msgTypes = make([]protoimpl.MessageInfo, 39)
 var file_generalView_proto_goTypes = []any{
 	(*User)(nil),                 // 0: kubernetes.User
 	(*Metadata)(nil),             // 1: kubernetes.Metadata
@@ -2113,33 +2340,36 @@ var file_generalView_proto_goTypes = []any{
 	(*ClientRequest)(nil),        // 25: kubernetes.ClientRequest
 	(*Response)(nil),             // 26: kubernetes.Response
 	(*Empty)(nil),                // 27: kubernetes.Empty
-	nil,                          // 28: kubernetes.Metadata.LabelsEntry
-	nil,                          // 29: kubernetes.Metadata.AnnotationsEntry
-	nil,                          // 30: kubernetes.Container.EnvEntry
-	nil,                          // 31: kubernetes.ResourceRequirements.LimitsEntry
-	nil,                          // 32: kubernetes.ResourceRequirements.RequestsEntry
-	nil,                          // 33: kubernetes.ResourceUsage.ResourceUsageEntry
-	nil,                          // 34: kubernetes.NodeSpec.TaintsEntry
-	nil,                          // 35: kubernetes.Capacity.ResourcesEntry
-	(*timestamp.Timestamp)(nil),  // 36: google.protobuf.Timestamp
+	(*HPASpec)(nil),              // 28: kubernetes.HPASpec
+	(*MetricSpec)(nil),           // 29: kubernetes.MetricSpec
+	(*Hpa)(nil),                  // 30: kubernetes.Hpa
+	nil,                          // 31: kubernetes.Metadata.LabelsEntry
+	nil,                          // 32: kubernetes.Metadata.AnnotationsEntry
+	nil,                          // 33: kubernetes.Container.EnvEntry
+	nil,                          // 34: kubernetes.ResourceRequirements.LimitsEntry
+	nil,                          // 35: kubernetes.ResourceRequirements.RequestsEntry
+	nil,                          // 36: kubernetes.ResourceUsage.ResourceUsageEntry
+	nil,                          // 37: kubernetes.NodeSpec.TaintsEntry
+	nil,                          // 38: kubernetes.Capacity.ResourcesEntry
+	(*timestamp.Timestamp)(nil),  // 39: google.protobuf.Timestamp
 }
 var file_generalView_proto_depIdxs = []int32{
-	28, // 0: kubernetes.Metadata.labels:type_name -> kubernetes.Metadata.LabelsEntry
-	29, // 1: kubernetes.Metadata.annotations:type_name -> kubernetes.Metadata.AnnotationsEntry
+	31, // 0: kubernetes.Metadata.labels:type_name -> kubernetes.Metadata.LabelsEntry
+	32, // 1: kubernetes.Metadata.annotations:type_name -> kubernetes.Metadata.AnnotationsEntry
 	1,  // 2: kubernetes.Role.metadata:type_name -> kubernetes.Metadata
 	2,  // 3: kubernetes.Role.rules:type_name -> kubernetes.PolicyRule
 	1,  // 4: kubernetes.RoleBinding.metadata:type_name -> kubernetes.Metadata
 	6,  // 5: kubernetes.Container.ports:type_name -> kubernetes.Port
-	30, // 6: kubernetes.Container.env:type_name -> kubernetes.Container.EnvEntry
+	33, // 6: kubernetes.Container.env:type_name -> kubernetes.Container.EnvEntry
 	7,  // 7: kubernetes.Container.resources:type_name -> kubernetes.ResourceRequirements
-	31, // 8: kubernetes.ResourceRequirements.limits:type_name -> kubernetes.ResourceRequirements.LimitsEntry
-	32, // 9: kubernetes.ResourceRequirements.requests:type_name -> kubernetes.ResourceRequirements.RequestsEntry
+	34, // 8: kubernetes.ResourceRequirements.limits:type_name -> kubernetes.ResourceRequirements.LimitsEntry
+	35, // 9: kubernetes.ResourceRequirements.requests:type_name -> kubernetes.ResourceRequirements.RequestsEntry
 	5,  // 10: kubernetes.PodSpec.containers:type_name -> kubernetes.Container
-	33, // 11: kubernetes.ResourceUsage.resource_usage:type_name -> kubernetes.ResourceUsage.ResourceUsageEntry
+	36, // 11: kubernetes.ResourceUsage.resource_usage:type_name -> kubernetes.ResourceUsage.ResourceUsageEntry
 	12, // 12: kubernetes.PodStatus.conditions:type_name -> kubernetes.Condition
 	9,  // 13: kubernetes.PodStatus.resource_usage:type_name -> kubernetes.ResourceUsage
 	10, // 14: kubernetes.PodStatus.worker:type_name -> kubernetes.Worker
-	36, // 15: kubernetes.Condition.last_update:type_name -> google.protobuf.Timestamp
+	39, // 15: kubernetes.Condition.last_update:type_name -> google.protobuf.Timestamp
 	1,  // 16: kubernetes.Pod.metadata:type_name -> kubernetes.Metadata
 	8,  // 17: kubernetes.Pod.spec:type_name -> kubernetes.PodSpec
 	11, // 18: kubernetes.Pod.status:type_name -> kubernetes.PodStatus
@@ -2151,13 +2381,13 @@ var file_generalView_proto_depIdxs = []int32{
 	14, // 24: kubernetes.Deployment.spec:type_name -> kubernetes.DeploymentSpec
 	16, // 25: kubernetes.Deployment.status:type_name -> kubernetes.DeploymentStatus
 	18, // 26: kubernetes.NodeSpec.unschedulable:type_name -> kubernetes.Unschedulable
-	34, // 27: kubernetes.NodeSpec.taints:type_name -> kubernetes.NodeSpec.TaintsEntry
+	37, // 27: kubernetes.NodeSpec.taints:type_name -> kubernetes.NodeSpec.TaintsEntry
 	12, // 28: kubernetes.NodeStatus.condition:type_name -> kubernetes.Condition
 	22, // 29: kubernetes.NodeStatus.capacity:type_name -> kubernetes.Capacity
 	22, // 30: kubernetes.NodeStatus.allocatable:type_name -> kubernetes.Capacity
 	23, // 31: kubernetes.NodeStatus.nodeInfo:type_name -> kubernetes.NodeInfo
 	20, // 32: kubernetes.NodeStatus.pods:type_name -> kubernetes.PodList
-	35, // 33: kubernetes.Capacity.resources:type_name -> kubernetes.Capacity.ResourcesEntry
+	38, // 33: kubernetes.Capacity.resources:type_name -> kubernetes.Capacity.ResourcesEntry
 	1,  // 34: kubernetes.Node.metadata:type_name -> kubernetes.Metadata
 	19, // 35: kubernetes.Node.spec:type_name -> kubernetes.NodeSpec
 	21, // 36: kubernetes.Node.status:type_name -> kubernetes.NodeStatus
@@ -2167,12 +2397,16 @@ var file_generalView_proto_depIdxs = []int32{
 	0,  // 40: kubernetes.ClientRequest.user:type_name -> kubernetes.User
 	24, // 41: kubernetes.ClientRequest.node:type_name -> kubernetes.Node
 	13, // 42: kubernetes.ClientRequest.pod:type_name -> kubernetes.Pod
-	36, // 43: kubernetes.ClientRequest.timestamp:type_name -> google.protobuf.Timestamp
-	44, // [44:44] is the sub-list for method output_type
-	44, // [44:44] is the sub-list for method input_type
-	44, // [44:44] is the sub-list for extension type_name
-	44, // [44:44] is the sub-list for extension extendee
-	0,  // [0:44] is the sub-list for field type_name
+	30, // 43: kubernetes.ClientRequest.hpa:type_name -> kubernetes.Hpa
+	39, // 44: kubernetes.ClientRequest.timestamp:type_name -> google.protobuf.Timestamp
+	29, // 45: kubernetes.HPASpec.metrics:type_name -> kubernetes.MetricSpec
+	1,  // 46: kubernetes.Hpa.metadata:type_name -> kubernetes.Metadata
+	28, // 47: kubernetes.Hpa.spec:type_name -> kubernetes.HPASpec
+	48, // [48:48] is the sub-list for method output_type
+	48, // [48:48] is the sub-list for method input_type
+	48, // [48:48] is the sub-list for extension type_name
+	48, // [48:48] is the sub-list for extension extendee
+	0,  // [0:48] is the sub-list for field type_name
 }
 
 func init() { file_generalView_proto_init() }
@@ -2187,6 +2421,7 @@ func file_generalView_proto_init() {
 		(*ClientRequest_User)(nil),
 		(*ClientRequest_Node)(nil),
 		(*ClientRequest_Pod)(nil),
+		(*ClientRequest_Hpa)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -2194,7 +2429,7 @@ func file_generalView_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_generalView_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   36,
+			NumMessages:   39,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

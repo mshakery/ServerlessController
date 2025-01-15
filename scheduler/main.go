@@ -46,13 +46,16 @@ func getNodesWithSufficientResource(ctx context.Context, cli *clientv3.Client, c
 			}
 			nd.freeCpu, _ = strconv.Atoi(nodeAllocatable.Resources["cpu"])
 			nd.freeMemory, _ = strconv.Atoi(nodeAllocatable.Resources["memory"])
-			if nd.freeCpu >= cpuMin && nd.freeMemory >= memoryMin {
+			unschedulableKey := fmt.Sprintf("/cluster/resources/node/%s/unschedulable", nd.name)
+			var unschedulable protos.Unschedulable
+			etcd.ReadOneFromEtcdToPb(cli, ctx, unschedulableKey, &unschedulable)
+			if nd.freeCpu >= cpuMin && nd.freeMemory >= memoryMin && unschedulable.Condition == false {
 				result = append(result, nd)
 			}
 		}
 	}
 	sort.Slice(result, func(i, j int) bool {
-		return result[i].freeMemory < result[j].freeMemory
+		return result[i].freeMemory > result[j].freeMemory
 	})
 	return result
 }

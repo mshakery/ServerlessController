@@ -38,7 +38,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: node-1
+  name: kubelet-0
   namespace: default
 spec:
   selector:
@@ -50,7 +50,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: node-2
+  name: kubelet-1
   namespace: default
 spec:
   selector:
@@ -62,7 +62,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: node-3
+  name: kubelet-2
   namespace: default
 spec:
   selector:
@@ -74,7 +74,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: node-4
+  name: kubelet-3
   namespace: default
 spec:
   selector:
@@ -86,7 +86,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: node-5
+  name: kubelet-4
   namespace: default
 spec:
   selector:

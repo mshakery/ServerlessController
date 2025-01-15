@@ -52,6 +52,7 @@ func main() {
 							"role",
 							"user",
 							"role_binding",
+							"hpa",
 						},
 					},
 				},
