@@ -122,3 +122,23 @@ func ReadManyFromEtcdToPb(cli *clientv3.Client, ctx context.Context, keyPrefix s
 	}
 	return nil
 }
+
+func DeleteFromEtcdByPrefix(cli *clientv3.Client, ctx context.Context, prefix string) error {
+	resp, err := cli.Delete(ctx, prefix, clientv3.WithPrefix())
+	if err != nil {
+		switch err {
+		case context.Canceled:
+			fmt.Printf("ctx is canceled by another routine: %v\n", err)
+		case context.DeadlineExceeded:
+			fmt.Printf("ctx is attached with a deadline is exceeded: %v\n", err)
+		case rpctypes.ErrEmptyKey:
+			fmt.Printf("client-side error: %v\n", err)
+		default:
+			fmt.Printf("bad cluster endpoints, which are not etcd servers: %v\n", err)
+		}
+		return err
+	}
+
+	fmt.Printf("deleted %d keys with prefix '%s'.\n", resp.Deleted, prefix)
+	return nil
+}
