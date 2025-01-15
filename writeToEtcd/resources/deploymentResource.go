@@ -6,6 +6,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/google/uuid"
 	"github.com/mshakery/ServerlessController/protos"
+	"sync"
 )
 
 type DeploymentResource struct {
@@ -42,10 +43,27 @@ func (dr *DeploymentResource) CreatePostHook(ctx context.Context) bool {
 		newPod.Status.ResourceUsage = &protos.ResourceUsage{ResourceUsage: make(map[string]string)}
 		pods = append(pods, newPod)
 	}
-	result := true
+
+	var wg sync.WaitGroup
+	resultChan, result := make(chan bool), true
+
 	for _, pod := range pods {
-		podResource := PodResource{Pod: pod}
-		result = result && CreateResourceInEtcd(ctx, &podResource) //TODO: parallelize it
+		wg.Add(1)
+		go func(pod protos.Pod) {
+			defer wg.Done()
+			podResource := PodResource{Pod: pod}
+			success := CreateResourceInEtcd(ctx, &podResource)
+			resultChan <- success
+		}(pod)
 	}
+
+	go func() {
+		wg.Wait()
+		close(resultChan)
+	}()
+	for success := range resultChan {
+		result = result && success
+	}
+
 	return result
 }
