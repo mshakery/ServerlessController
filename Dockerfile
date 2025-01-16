@@ -7,4 +7,4 @@ RUN go mod download && go mod verify
 COPY . .
 
 
-RUN for function in "authentication"  "authorization"   "kubelet"  "metricCollector"  "metricCollectorCronjob"   "scheduler"  "writeToEtcd"; do cd $function; go build .; cd ..; done
+RUN for function in "authentication"  "authorization"   "kubelet"  "metricCollector"  "metricCollectorCronjob"   "scheduler"  "writeToEtcd"  "nodeChecker"  "horizontalpodautoscaler"  "nodeCheckerCronjob"   "horizontalPodAutoscalerCronjob"; do cd $function; go build .; cd ..; done
