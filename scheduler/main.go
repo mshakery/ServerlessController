@@ -56,7 +56,7 @@ func getNodesWithSufficientResource(ctx context.Context, cli *clientv3.Client, c
 		}
 	}
 	sort.Slice(result, func(i, j int) bool {
-		return result[i].freeMemory > result[j].freeMemory
+		return result[i].freeMemory < result[j].freeMemory
 	})
 	fmt.Println("Time took to schedule a pod in ns:", time.Now().UnixNano()-startTime)
 	return result

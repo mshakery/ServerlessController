@@ -28,14 +28,16 @@ func (s *server) GatherMetric(ctx context.Context, in *protos.NodeName) (*protos
 	host := fmt.Sprintf("%s:50051", in.GetName())
 
 	conn, err2 := grpc.NewClient(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	client, err := etcd.ConnectToEtcd()
-	if err != nil {
-		panic("Could not connect to etcd. ")
-	}
-
 	if err2 != nil {
 		log.Fatalf("kubelet node: could not connect: %v", err2)
+		return &protos.Empty{}, nil
 	}
+	client, err := etcd.ConnectToEtcd()
+	if err != nil {
+		log.Fatalf("kubelet node: could not connect: %v", err)
+		return &protos.Empty{}, nil
+	}
+
 	c := protos.NewKubeletClient(conn)
 
 	inp := protos.Empty{}
@@ -43,6 +45,7 @@ func (s *server) GatherMetric(ctx context.Context, in *protos.NodeName) (*protos
 
 	if err3 != nil {
 		log.Fatalf("metrics: could not connect: %v", err3)
+		return &protos.Empty{}, nil
 	}
 	nodeCpuUsage, nodeMemoryUsage := 0, 0
 	for _, podMetric := range response.GetPodMetrics() {
