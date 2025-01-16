@@ -26,8 +26,10 @@ type server struct {
 }
 
 func ReallocatePods(ctx context.Context, client *clientv3.Client, nodeName string) {
+	startTime := time.Now().UnixNano()
 	response, _ := etcd.ReadFromEtcd(client, ctx, "/cluster/resources/pod/", true)
 	for _, kv := range response.Kvs {
+		startForThisNode := time.Now().UnixNano()
 		if strings.Count(string(kv.Key), "/") == 6 && strings.HasSuffix(string(kv.Key), "/worker") {
 			workerProto := protos.Worker{}
 			err := proto.Unmarshal(kv.Value, &workerProto)
@@ -55,10 +57,13 @@ func ReallocatePods(ctx context.Context, client *clientv3.Client, nodeName strin
 				}
 			}
 		}
+		fmt.Println("Time took to reallocade node", kv.Key, "was:", time.Now().UnixNano()-startForThisNode)
 	}
+	fmt.Println("Time took to run entire ReallocatePods function:", time.Now().UnixNano()-startTime)
 }
 
 func (s *server) CheckNode(ctx context.Context, in *protos.NodeNamee) (*protos.Empty, error) {
+	startTime := time.Now().UnixNano()
 	client, err := etcd.ConnectToEtcd()
 	if err != nil {
 		panic("Could not connect to etcd. ")
@@ -84,6 +89,7 @@ func (s *server) CheckNode(ctx context.Context, in *protos.NodeNamee) (*protos.E
 		//etcd.ReleaseLock(client, NodeUnschedulableKey)
 		etcd.WriteToEtcdFromPb(client, ctx, NodeUnschedulableKey, &protos.Unschedulable{Condition: false})
 	}
+	fmt.Println("Time took to run CheckNode function:", time.Now().UnixNano()-startTime)
 
 	return &protos.Empty{}, nil
 }

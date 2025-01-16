@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	etcd "github.com/mshakery/ServerlessController/etcdMiddleware"
 	"github.com/mshakery/ServerlessController/protos"
 	"google.golang.org/grpc"
@@ -9,9 +10,11 @@ import (
 	"log"
 	"path"
 	"strings"
+	"time"
 )
 
 func main() {
+	startTime := time.Now().UnixNano()
 	client, err := etcd.ConnectToEtcd()
 	if err != nil {
 		panic("Could not connect to etcd. ")
@@ -40,4 +43,5 @@ func main() {
 			log.Printf("node %s checked\n", NodeName)
 		}
 	}
+	fmt.Println("Time took to run nodeCheckerCronjob function:", time.Now().UnixNano()-startTime)
 }

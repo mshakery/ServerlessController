@@ -15,6 +15,7 @@ import (
 	"net"
 	"strconv"
 	"sync"
+	"time"
 )
 
 var (
@@ -55,6 +56,7 @@ func CalculateAverageResourceUsage(client *clientv3.Client, ctx context.Context,
 }
 
 func (s *server) Scale(ctx context.Context, in *protos.HpaName) (*protos.Empty, error) {
+	startTime := time.Now().UnixNano()
 	conn, err := grpc.NewClient("write-to-etcd.default.10.101.174.165.sslip.io:80", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("could not connect: %v", err)
@@ -163,6 +165,7 @@ func (s *server) Scale(ctx context.Context, in *protos.HpaName) (*protos.Empty, 
 		}
 		wg.Wait()
 	}
+	fmt.Println("Time took to run function:", time.Now().UnixNano()-startTime)
 	return &protos.Empty{}, nil
 }
 

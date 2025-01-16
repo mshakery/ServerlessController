@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	etcd "github.com/mshakery/ServerlessController/etcdMiddleware"
 	"github.com/mshakery/ServerlessController/protos"
 	"google.golang.org/grpc"
@@ -9,9 +10,11 @@ import (
 	"log"
 	"path"
 	"strings"
+	"time"
 )
 
 func main() {
+	startTime := time.Now().UnixNano()
 	client, err := etcd.ConnectToEtcd()
 	if err != nil {
 		panic("Could not connect to etcd. ")
@@ -38,6 +41,8 @@ func main() {
 				log.Fatalf("metrics: could not connect 2: %v", err3)
 			}
 			log.Printf("metrics are collected for node %s\n", NodeName)
+			fmt.Println("Time since start:", time.Now().UnixNano()-startTime)
 		}
 	}
+	fmt.Println("Time took to run entire function:", time.Now().UnixNano()-startTime)
 }
