@@ -218,9 +218,9 @@ message ClientRequest {
     User user = 5;
     Node node = 6;
     Pod pod = 7;
-    Hpa hpa = 9;
+    Hpa hpa = 8;
   }
-  google.protobuf.Timestamp timestamp = 8;
+  google.protobuf.Timestamp timestamp = 9;
 }
 
 message Response {
@@ -249,3 +249,6 @@ message Hpa {
   Metadata metadata = 1;            // Metadata for the HPA
   HPASpec spec = 2;                 // Specification of the HPA
 }
+
+
+
