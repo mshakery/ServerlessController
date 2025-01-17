@@ -68,21 +68,21 @@ func (s *server) Scale(ctx context.Context, in *protos.HpaName) (*protos.Empty, 
 	if err != nil {
 		panic("Could not connect to etcd. ")
 	}
-	var hpa *protos.Hpa
+	var hpa protos.Hpa
 	key := fmt.Sprintf("/cluster/resources/hpa/%s/%s", in.GetNamespace(), in.GetName())
-	err = etcd.ReadOneFromEtcdToPb(client, ctx, key, hpa)
+	err = etcd.ReadOneFromEtcdToPb(client, ctx, key, &hpa)
 	if err != nil {
 		return nil, err
 	}
 	deploymentStatusKey := fmt.Sprintf("/cluster/resources/Deployment/%s/%s/status", in.GetNamespace(), hpa.GetSpec().GetTargetResource())
-	var deploymentStatus *protos.DeploymentStatus
-	err = etcd.ReadOneFromEtcdToPb(client, ctx, deploymentStatusKey, deploymentStatus)
+	var deploymentStatus protos.DeploymentStatus
+	err = etcd.ReadOneFromEtcdToPb(client, ctx, deploymentStatusKey, &deploymentStatus)
 	if err != nil {
 		return nil, err
 	}
 	deploymentKey := fmt.Sprintf("/cluster/resources/Deployment/%s/%s", in.GetNamespace(), hpa.GetSpec().GetTargetResource())
-	var deployment *protos.Deployment
-	err = etcd.ReadOneFromEtcdToPb(client, ctx, deploymentKey, deployment)
+	var deployment protos.Deployment
+	err = etcd.ReadOneFromEtcdToPb(client, ctx, deploymentKey, &deployment)
 	if err != nil {
 		return nil, err
 	}
@@ -142,8 +142,8 @@ func (s *server) Scale(ctx context.Context, in *protos.HpaName) (*protos.Empty, 
 				go func() {
 					defer wg.Done()
 					podWorkerKey := fmt.Sprintf("/cluster/resources/pod/%s/%s/worker", in.GetNamespace(), removedPod)
-					var podWorker *protos.Worker
-					err = etcd.ReadOneFromEtcdToPb(client, ctx, podWorkerKey, podWorker)
+					var podWorker protos.Worker
+					err = etcd.ReadOneFromEtcdToPb(client, ctx, podWorkerKey, &podWorker)
 					if err != nil {
 						log.Fatalf("cant read from etcd: %v", err)
 					}
