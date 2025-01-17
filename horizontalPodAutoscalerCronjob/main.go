@@ -21,7 +21,7 @@ func main() {
 	}
 	defer client.Close()
 	ctx := context.Background()
-	read, err := etcd.ReadFromEtcd(client, ctx, "/cluster/resources/hpa/", true)
+	read, err := etcd.ReadFromEtcd(client, ctx, "/cluster/resources/hpa", true)
 	if err != nil {
 	}
 	for _, kv := range read.Kvs {
