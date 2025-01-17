@@ -72,19 +72,19 @@ func (s *server) Scale(ctx context.Context, in *protos.HpaName) (*protos.Empty, 
 	key := fmt.Sprintf("/cluster/resources/hpa/%s/%s", in.GetNamespace(), in.GetName())
 	err = etcd.ReadOneFromEtcdToPb(client, ctx, key, &hpa)
 	if err != nil {
-		return nil, err
+		log.Fatalf("cant read from etcd: %v", err)
 	}
 	deploymentStatusKey := fmt.Sprintf("/cluster/resources/Deployment/%s/%s/status", in.GetNamespace(), hpa.GetSpec().GetTargetResource())
 	var deploymentStatus protos.DeploymentStatus
 	err = etcd.ReadOneFromEtcdToPb(client, ctx, deploymentStatusKey, &deploymentStatus)
 	if err != nil {
-		return nil, err
+		log.Fatalf("cant read from etcd: %v", err)
 	}
 	deploymentKey := fmt.Sprintf("/cluster/resources/Deployment/%s/%s", in.GetNamespace(), hpa.GetSpec().GetTargetResource())
 	var deployment protos.Deployment
 	err = etcd.ReadOneFromEtcdToPb(client, ctx, deploymentKey, &deployment)
 	if err != nil {
-		return nil, err
+		log.Fatalf("cant read from etcd: %v", err)
 	}
 	resourceAverage := CalculateAverageResourceUsage(client, ctx, in.GetNamespace(), deploymentStatus.PodNames, hpa.GetSpec().GetMetrics().GetMetricType())
 	targetValue := resourceAverage / hpa.GetSpec().GetMetrics().GetTargetValue()
@@ -106,9 +106,6 @@ func (s *server) Scale(ctx context.Context, in *protos.HpaName) (*protos.Empty, 
 				newUuid := uuid.New().String()
 				newPodName := fmt.Sprintf("%s-%s", hpa.GetSpec().GetTargetResource(), newUuid)
 				currrentPods = append(currrentPods, newPodName)
-				if err != nil {
-					return nil, err
-				}
 				newPod := protos.Pod{}
 				newPod.Metadata = deployment.GetMetadata()
 				newPod.Metadata.Name = newPodName
@@ -135,7 +132,7 @@ func (s *server) Scale(ctx context.Context, in *protos.HpaName) (*protos.Empty, 
 				currrentPods = currrentPods[:len(currrentPods)-1]
 				err = etcd.WriteToEtcdFromPb(client, ctx, deploymentStatusKey, &protos.DeploymentStatus{Replicas: currentReplica, PodNames: currrentPods})
 				if err != nil {
-					return nil, err
+					log.Fatalf("cant write to etcd: %v", err)
 				}
 
 				wg.Add(1)
