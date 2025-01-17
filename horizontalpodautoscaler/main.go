@@ -46,7 +46,7 @@ func CalculateAverageResourceUsage(client *clientv3.Client, ctx context.Context,
 		i, err := strconv.Atoi(ru.GetResourceUsage()[resourceType])
 		if err != nil {
 			// ... handle error
-			log.Fatalf("str to int error: %v", err)
+			//log.Fatalf("str to int error: %v", err)
 			continue
 		}
 		sum += i
@@ -142,7 +142,7 @@ func (s *server) Scale(ctx context.Context, in *protos.HpaName) (*protos.Empty, 
 					var podWorker protos.Worker
 					err = etcd.ReadOneFromEtcdToPb(client, ctx, podWorkerKey, &podWorker)
 					if err != nil {
-						log.Fatalf("cant read from etcd: %v", err)
+						return
 					}
 					workerKey := fmt.Sprintf("%s:50051", podWorker.GetWorker())
 					conn, err := grpc.NewClient(workerKey, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -155,7 +155,7 @@ func (s *server) Scale(ctx context.Context, in *protos.HpaName) (*protos.Empty, 
 					podKey := fmt.Sprintf("/cluster/resources/pod/%s/%s", in.GetNamespace(), removedPod)
 					_, err = client.Delete(ctx, podKey, clientv3.WithPrefix())
 					if err != nil {
-						log.Fatalf("Failed to delete keys with prefix %s: %v", podKey, err)
+						return
 					}
 				}()
 			}
