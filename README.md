@@ -27,21 +27,20 @@ Don't push binaries to git, please <3
 
 Status: Doing, Testing (written but haven't tested), Backlog, Done
 
-| Function                       | Description                     | By     | Status  |
-|--------------------------------|---------------------------------|--------|---------|
-| **Authentication**             | User authentication             | Arshia | Testing | 
-| **Authorization**              | Check user has perms            | Arshia | Testing | 
-| **WriteToEtcd**                | Self explanatory (lib)          | Arshia | Testing | 
-| **ReadFromEtcd**               | Self explanatory (lib)          | Arshia | Testing | 
-| **AcquireLock**                | require lockid, over etcd (lib) | Arshia | Testing | 
-| **ReleaseLock**                | require lockid, over etcd (lib) | Arshia | Testing | 
-| **WatchLock**                  | require lockid, over etcd (lib) | Arshia | Testing | 
-| **NotifyWorkerNode**           | ?                               | ?      | Backlog | 
-| **NodeCheckerAwakerCron**      | ?                               | ?      | Backlog | 
-| **NodeChecker**                | ?                               | ?      | Backlog | 
-| **DeploymentScalerAwakerCron** | ?                               | ?      | Backlog | 
-| **DeploymentScaler**           | ?                               | ?      | Backlog | 
-| **Kubelet**                    | TODO: Split to subfuncs         | Roy    | Doing   |
+| Function                       | Description                     | By     | Status |
+|--------------------------------|---------------------------------|--------|--------|
+| **Authentication**             | User authentication             | Arshia | Done   | 
+| **Authorization**              | Check user has perms            | Arshia | Done   | 
+| **WriteToEtcd**                | Self explanatory (lib)          | Arshia | Done   | 
+| **AcquireLock**                | require lockid, over etcd (lib) | Arshia | Done   | 
+| **ReleaseLock**                | require lockid, over etcd (lib) | Arshia | Done   | 
+| **WatchLock**                  | require lockid, over etcd (lib) | Arshia | Done   | 
+| **NotifyWorkerNode**           | ?                               | Masoud | Done   | 
+| **NodeCheckerAwakerCron**      | ?                               | Masoud | Done   | 
+| **NodeChecker**                | ?                               | Masoud | Done   | 
+| **DeploymentScalerAwakerCron** | ?                               | Masoud | Done   | 
+| **DeploymentScaler**           | ?                               | Masoud | Done   | 
+| **Kubelet**                    |                                 | Roy    | Done   |
 
 ## Time Tracking
 
@@ -53,9 +52,9 @@ XP-Time: Experiment Time
 | **Time Type**     | **Arshia (hours)** | **Masoud (hours)** | **Roy (hours)** |
 |-------------------|--------------------|--------------------|-----------------|
 | **Total-Time**    |                    |                    |                 |
-| **Think-Time**    | 13                 | 12                 | 10              |
-| **Dev-Time**      | 12                 | 12                 | 6               |
-| **XP-Time**       | 0                  | 0                  | 0               |
-| **Analysis-Time** | 2                  | 2                  | 2               |
-| **Write-Time**    | 0                  | 0                  | 0               |
-| **Wasted-Time**   | 5                  | 3                  | 3               |
+| **Think-Time**    | 28                 | 33                 | 12              |
+| **Dev-Time**      | 30                 | 57                 | 9               |
+| **XP-Time**       | 15                 | 15                 | 3               |
+| **Analysis-Time** | 8                  | 8                  | 4               |
+| **Write-Time**    | 8                  | 13                 | 16              |
+| **Wasted-Time**   | 11                 | 8                  | 5               |
