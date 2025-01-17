@@ -120,6 +120,8 @@ func checkHasPermission(rule *protos.PolicyRule, request *protos.ClientRequest) 
 		return slices.Contains(rule.Resources, "node") && slices.Contains(rule.Verbs, request.Operation)
 	case *protos.ClientRequest_Pod:
 		return slices.Contains(rule.Resources, "pod") && slices.Contains(rule.Verbs, request.Operation)
+	case *protos.ClientRequest_Hpa:
+		return slices.Contains(rule.Resources, "hpa") && slices.Contains(rule.Verbs, request.Operation)
 	}
 	return false
 }
