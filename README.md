@@ -2,6 +2,15 @@
 
 God bless us. 
 
+# deploy and test 
+1. create a docker image with provided dcoker file
+2. update the docker image path in k8s yaml configs in k8s_resources files
+3. kubectl apply -f ./k8s_resources
+4. Install Kreya
+5. setup a connection in kreya to the cluster gatway with host header of authentication
+6. gRpc reflection is on so keya loads all protos automatically
+7. chnge the request in a way you like and start sending request
+
 ## Info
 
 Group related functions into a package (folder), each package should ideally be maintained by one person only. 
