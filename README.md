@@ -8,8 +8,8 @@ God bless us.
 3. kubectl apply -f ./k8s_resources
 4. Install Kreya
 5. setup a connection in kreya to the cluster gatway with host header of authentication
-6. gRpc reflection is on so keya loads all protos automatically
-7. chnge the request in a way you like and start sending request
+6. gRpc reflection is on so kreya loads all protos automatically
+7. change the request in a way you like and start sending requests
 
 ## Info
 
