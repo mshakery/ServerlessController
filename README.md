@@ -5,11 +5,12 @@ God bless us.
 # deploy and test 
 1. create a docker image with provided dcoker file
 2. update the docker image path in k8s yaml configs in k8s_resources files
-3. kubectl apply -f ./k8s_resources
-4. Install Kreya
-5. setup a connection in kreya to the cluster gatway with host header of authentication
-6. gRpc reflection is on so kreya loads all protos automatically
-7. change the request in a way you like and start sending requests
+3. cd init_etcd && go run .
+4. cd .. && kubectl apply -f ./k8s_resources
+5. Install Kreya
+6. setup a connection in kreya to the cluster gatway with host header of authentication ingress
+7. gRpc reflection is on so kreya loads all protos automatically
+8. change the request in a way you like and start sending requests
 
 ## Info
 
